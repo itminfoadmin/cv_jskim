@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CV Cover</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+    }
+    .cover-wrapper {
+      position: relative;
+      width: fit-content;
+      height: fit-content;
+      overflow: visible;
+    }
+    img {
+      display: block;
+      max-width: 90vw;
+      max-height: 90vh;
+      position: relative;
+      z-index: 2;
+    }
+    .email-overlay {
+      position: absolute;
+      top: 55.5%;
+      left: 53.5%;
+      transform: translateX(calc(-50% + 0.15em / 2));
+      color: #c4a265;
+      font-size: 1.1vw;
+      font-family: "Georgia", "Times New Roman", serif;
+      font-style: italic;
+      letter-spacing: 0.15em;
+      padding: 0.3em 0.5em;
+      white-space: nowrap;
+      cursor: text;
+      user-select: text;
+      z-index: 3;
+    }
+    .email-overlay::selection {
+      background: rgba(100, 150, 255, 0.4);
+      color: #c4a265;
+    }
+
+    /* Content Overlay */
+    .content-overlay {
+      position: absolute;
+      top: 5%;
+      left: 10%;
+      right: 4%;
+      bottom: 5%;
+      z-index: 3;
+      display: none;
+      overflow-y: hidden;
+      padding: 3% 5% 3% 4%;
+      scrollbar-width: none;
+    }
+    .content-overlay::-webkit-scrollbar { display: none; }
+    .content-overlay .section-title {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.4vw;
+      font-weight: bold;
+      color: #3C2415;
+      margin-top: 4vh;
+      margin-bottom: 4.5vh;
+      letter-spacing: 0.05em;
+      text-decoration: underline;
+      text-underline-offset: 0.4em;
+    }
+    .content-overlay .section-title:first-child {
+      margin-top: 3vh;
+    }
+    .content-overlay .section-title:not(:first-child) {
+      margin-top: 10vh;
+    }
+    .content-overlay .content-item {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      color: #5A4632;
+      line-height: 1.7;
+      margin-bottom: 0.6vh;
+    }
+    .content-overlay .loading {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 1vw;
+      color: #999;
+      font-style: italic;
+      line-height: 1.8;
+    }
+
+    /* Error / Reload */
+    .error-screen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 3;
+    }
+    .error-screen p {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.1vw;
+      color: #5A4632;
+      margin-bottom: 2.5vh;
+      letter-spacing: 0.03em;
+    }
+    .error-screen button {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 0.9vw;
+      letter-spacing: 0.15em;
+      color: #C4A265;
+      background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
+      border: 1px solid #6b5a3e;
+      border-radius: 4px;
+      padding: 0.6em 2em;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .error-screen button:hover {
+      background: linear-gradient(135deg, #4a3c28 0%, #6b5a3e 50%, #4a3c28 100%);
+      color: #e8d5a8;
+      border-color: #C4A265;
+    }
+
+    /* Education Entry */
+    .edu-entry {
+      margin-bottom: 2vh;
+      padding-bottom: 2vh;
+      border-bottom: 1px solid #C8B89A;
+    }
+    .edu-entry:last-child {
+      border-bottom: none;
+    }
+    .edu-school-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      color: #3C2415;
+      margin-bottom: 0.3vh;
+    }
+    .edu-school-name {
+      font-weight: bold;
+    }
+    .edu-period {
+      white-space: nowrap;
+      margin-left: 2vw;
+      color: #5A4632;
+    }
+    .edu-detail {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      line-height: 1.6;
+      padding-left: 2.5vw;
+      margin-top: 0.3vh;
+    }
+    .edu-detail .edu-degree-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .edu-advisor-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .edu-detail a {
+      color: #3C2415;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .edu-detail a:hover {
+      color: #D4A94C;
+    }
+    .edu-detail .ext-icon {
+      display: inline-block;
+      margin-left: 0.4em;
+      font-size: 0.85vw;
+      vertical-align: middle;
+      opacity: 0.8;
+    }
+    .edu-detail a:hover .ext-icon {
+      opacity: 1;
+    }
+
+    /* Bullet list items (Research Interests) */
+    .content-bullet {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.15vw;
+      color: #3C2415;
+      line-height: 1.7;
+      margin-bottom: 4vh;
+      padding-left: 1.2vw;
+      text-indent: -1.2vw;
+    }
+    .content-bullet::before {
+      content: '· ';
+      font-weight: bold;
+    }
+
+    /* Hanging indent items (Presentations) */
+    .content-hanging {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      color: #3C2415;
+      line-height: 1.8;
+      margin-bottom: 3vh;
+      padding-left: 2.5vw;
+      text-indent: -2.5vw;
+    }
+
+    /* Discussion Participant Entry */
+    .disc-entry {
+      margin-bottom: 2.5vh;
+      padding-bottom: 2.5vh;
+      border-bottom: 1px solid #C8B89A;
+    }
+    .disc-entry:last-child {
+      border-bottom: none;
+    }
+    .disc-title-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      color: #3C2415;
+      margin-bottom: 0.3vh;
+      gap: 1.5vw;
+    }
+    .disc-title {
+      font-weight: bold;
+      flex: 1;
+    }
+    .disc-date {
+      white-space: nowrap;
+      color: #5A4632;
+      text-align: right;
+    }
+    .disc-desc {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      line-height: 1.7;
+      padding-left: 2.5vw;
+      margin-top: 0.3vh;
+    }
+
+    /* Professional Experience Entry */
+    .prof-entry {
+      margin-bottom: 2.5vh;
+      padding-bottom: 2.5vh;
+      border-bottom: 1px solid #C8B89A;
+    }
+    .prof-entry:last-child {
+      border-bottom: none;
+    }
+    .prof-org {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      font-weight: bold;
+      color: #3C2415;
+      line-height: 1.6;
+    }
+    .prof-detail {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      line-height: 1.7;
+      padding-left: 2.5vw;
+      margin-top: 0.3vh;
+    }
+    .prof-role-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1.5vw;
+    }
+    .prof-role-title {
+      font-weight: bold;
+      font-style: italic;
+    }
+    .prof-period {
+      white-space: nowrap;
+      text-align: right;
+      color: #5A4632;
+    }
+    .prof-period-only {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      text-align: right;
+      margin-top: 0.3vh;
+    }
+
+    /* Awards Entry */
+    .award-entry {
+      margin-bottom: 1.5vh;
+      padding-bottom: 1.5vh;
+      border-bottom: 1px solid #C8B89A;
+    }
+    .award-entry:last-child {
+      border-bottom: none;
+    }
+    .award-title {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      font-weight: bold;
+      color: #3C2415;
+      line-height: 1.6;
+    }
+    .award-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      line-height: 1.7;
+      padding-left: 2.5vw;
+      margin-top: 0.3vh;
+      gap: 1.5vw;
+    }
+    .award-date {
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* Certification Entry */
+    .cert-entry {
+      margin-bottom: 2vh;
+      padding-bottom: 2vh;
+      border-bottom: 1px solid #C8B89A;
+    }
+    .cert-entry:last-child {
+      border-bottom: none;
+    }
+    .cert-name {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      font-weight: bold;
+      color: #3C2415;
+      line-height: 1.6;
+    }
+    .cert-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      line-height: 1.7;
+      padding-left: 2.5vw;
+      margin-top: 0.3vh;
+      gap: 1.5vw;
+    }
+    .cert-desc {
+      flex: 1;
+    }
+    .cert-date {
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* Teaching Experience */
+    .teach-block {
+      margin-bottom: 3vh;
+    }
+    .teach-block + .teach-block {
+      margin-top: 6vh;
+    }
+    .teach-org-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.05vw;
+      color: #3C2415;
+      gap: 1.5vw;
+    }
+    .teach-org-name {
+      font-weight: bold;
+    }
+    .teach-period {
+      white-space: nowrap;
+      color: #5A4632;
+    }
+    .teach-role {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      font-style: italic;
+      font-weight: bold;
+      color: #3C2415;
+      padding-left: 2vw;
+      margin-top: 2.0vh;
+    }
+    .teach-sub {
+      display: flex;
+      justify-content: flex-start;
+      align-items: baseline;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #5A4632;
+      padding-left: 3vw;
+      margin-top: 1.5vh;
+      gap: 0;
+    }
+    .teach-sub::before {
+      content: '· ';
+      flex-shrink: 0;
+      margin-right: 0.3vw;
+    }
+    .teach-sub-name {
+      flex: 1;
+      text-align: left;
+    }
+    .teach-sub .teach-period {
+      margin-left: auto;
+      padding-left: 1.5vw;
+    }
+
+    /* Publication Entry */
+    .pub-entry {
+      margin-bottom: 1.2vh;
+      padding-bottom: 1.2vh;
+      border-bottom: 1px solid #C8B89A;
+    }
+    .pub-entry:last-child {
+      border-bottom: none;
+    }
+    .pub-text {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.0vw;
+      color: #3C2415;
+      line-height: 1.8;
+      padding-left: 2.5vw;
+      text-indent: -2.5vw;
+    }
+    .pub-text a {
+      color: #5A4632;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .pub-text a:hover {
+      color: #D4A94C;
+    }
+    .pub-abstract {
+      text-align: right;
+      margin-top: 0.2vh;
+      padding-right: 0.5vw;
+    }
+    .pub-abstract a {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 0.95vw;
+      color: #3C2415;
+      text-decoration: none;
+      font-weight: bold;
+      font-style: italic;
+    }
+    .pub-abstract a:hover {
+      color: #D4A94C;
+    }
+    .pub-abstract .ext-icon {
+      font-size: 0.85vw;
+      vertical-align: middle;
+      margin-left: 0.3em;
+      opacity: 0.8;
+    }
+
+    /* Pagination */
+    .pagination {
+      position: absolute;
+      bottom: 6%;
+      left: 10%;
+      right: 4%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5vw;
+      z-index: 4;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 0.9vw;
+      color: #5A4632;
+      user-select: none;
+    }
+    .pagination button {
+      background: none;
+      border: none;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.1vw;
+      color: #5A4632;
+      cursor: pointer;
+      padding: 0.2em 0.6em;
+      transition: color 0.2s;
+    }
+    .pagination button:hover {
+      color: #D4A94C;
+    }
+    .pagination button:disabled {
+      color: #C8B89A;
+      cursor: default;
+    }
+    .pagination .page-info {
+      letter-spacing: 0.1em;
+      font-weight: bold;
+      color: #3C2415;
+    }
+
+    /* Index Tabs */
+    .index-tabs {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      margin-left: calc(39px - 9vw);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.3vh;
+      z-index: 1;
+    }
+    .index-tab {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: calc(100% * 1.0978 / 13);
+      padding: 0.3em 3.3vw 0.3em 1.8vw;
+      margin-left: -1vw;
+      background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
+      border: 1px solid #6b5a3e;
+      border-left: none;
+      border-radius: 0 4px 4px 0;
+      color: #c4a265;
+      font-family: "Georgia", "Times New Roman", serif;
+      font-style: italic;
+      font-size: 0.75vw;
+      white-space: normal;
+      max-width: 12.1vw;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 0.4s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      box-shadow: 2px 1px 4px 0px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+    .index-tab:hover,
+    .index-tab.active {
+      transform: translateX(calc(9vw - 60px));
+      z-index: 5;
+      background: linear-gradient(135deg, #4a3c28 0%, #6b5a3e 50%, #4a3c28 100%);
+      color: #e8d5a8;
+      border-color: #c4a265;
+    }
+    .index-tab:active {
+      background: linear-gradient(135deg, #5a4d38 0%, #7a6845 50%, #5a4d38 100%);
+      color: #f0e2bc;
+    }
+    .tab-abbr {
+      position: absolute;
+      right: calc(0.5vw + 2px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85vw;
+      font-weight: bold;
+      color: #e8d5a8;
+      opacity: 0.6;
+      letter-spacing: 0.02em;
+    }
+    .index-tab:hover .tab-abbr { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="cover-wrapper">
+    <img src="img/cv_cover.png" alt="CV Cover">
+    <span class="email-overlay">nicobass5735@gmail.com</span>
+    <div class="content-overlay" id="contentOverlay"></div>
+    <div class="pagination" id="pagination" style="display:none;">
+      <button id="prevPage">&#9664;</button>
+      <span class="page-info" id="pageInfo"></span>
+      <button id="nextPage">&#9654;</button>
+    </div>
+
+    <div class="index-tabs">
+      <div class="index-tab active" data-page="cover">Cover<span class="tab-abbr">C</span></div>
+      <div class="index-tab" data-page="education">Education<span class="tab-abbr">E</span></div>
+      <div class="index-tab" data-page="research-interests">Research Interests<span class="tab-abbr">RI</span></div>
+      <div class="index-tab" data-page="publications">Publications<span class="tab-abbr">P</span></div>
+      <div class="index-tab" data-page="presentations">Presentations<span class="tab-abbr">P</span></div>
+      <div class="index-tab" data-page="discussion">Discussion Participant<span class="tab-abbr">DP</span></div>
+      <div class="index-tab" data-page="teaching">Teaching<br>Experience<span class="tab-abbr">TE</span></div>
+      <div class="index-tab" data-page="professional">Professional Experiences<span class="tab-abbr">PE</span></div>
+      <div class="index-tab" data-page="certification">Certification<span class="tab-abbr">CT</span></div>
+      <div class="index-tab" data-page="awards">Awards and Scholarships<span class="tab-abbr">AS</span></div>
+      <div class="index-tab" data-page="ongoing-research">Ongoing Research<span class="tab-abbr">OR</span></div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+     *  ★ 아래 URL을 GAS 웹 앱 배포 URL로 교체하세요 ★
+     * ============================================================ */
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwOI0P1oMCyJYfnTkzsZFfpMcDxGIwQvnHFlSfSyeB1-o08-Xmd1crX-wXE107HfY4L/exec';
+
+    const img = document.querySelector('.cover-wrapper img');
+    const emailOverlay = document.querySelector('.email-overlay');
+    const contentOverlay = document.getElementById('contentOverlay');
+
+    /* ── 캐시: 한 번만 불러오고 재사용 ── */
+    const cache = {};
+
+    async function fetchFromGAS(sheetNames) {
+      // 캐시에 없는 시트만 요청
+      const needed = sheetNames.filter(function(s) { return !(s in cache); });
+
+      if (needed.length > 0) {
+        const url = GAS_URL + '?sheets=' + encodeURIComponent(needed.join(','));
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Network error: ' + res.status);
+        const json = await res.json();
+        // 캐시에 저장
+        for (var key in json) { cache[key] = json[key]; }
+      }
+
+      // 캐시에서 결과 조합
+      var result = {};
+      sheetNames.forEach(function(s) { result[s] = cache[s] || []; });
+      return result;
+    }
+
+    /* ── 페이지 로드 시 모든 데이터 미리 불러오기 ── */
+    (async function preload() {
+      try {
+        await fetchFromGAS([
+          '01_ongoing_research', '02_ongoing_study', '03_education', '04_reaserch_interest', '05_publications', '06_presentations', '07_discussion_participant', '08_teaching_experience-1', '09_teaching_experience-2', '10_certicication', '11_profession_experience', '12_awards_and_scholarships'
+        ]);
+        console.log('데이터 프리로드 완료');
+      } catch (e) {
+        console.warn('프리로드 실패 (탭 클릭 시 재시도):', e);
+      }
+    })();
+
+    /* ── Publications 렌더링 (페이지네이션) ── */
+    var pubData = [];
+    var pubPage = 1;
+    var pubPerPage = 4;
+
+    async function renderPublications(page) {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+      document.getElementById('pagination').style.display = 'none';
+
+      try {
+        if (pubData.length === 0) {
+          const data = await fetchFromGAS(['05_publications']);
+          const rows = data['05_publications'] || [];
+          if (rows.error) { showErrorScreen(); return; }
+          rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+          pubData = rows;
+        }
+
+        pubPage = page || 1;
+        var totalPages = Math.ceil(pubData.length / pubPerPage);
+        if (pubPage > totalPages) pubPage = totalPages;
+        if (pubPage < 1) pubPage = 1;
+
+        var start = (pubPage - 1) * pubPerPage;
+        var end = start + pubPerPage;
+        var pageItems = pubData.slice(start, end);
+
+        let html = '<div class="section-title">PUBLICATIONS</div>';
+        pageItems.forEach(function(row) {
+          var text = escapeHtml(row.content || '');
+          var doiLink = row.doi_link || '';
+          var abstractLink = row.abstrat_link || '';
+
+          // 저널명 이탤릭 처리: "Author (Year). Title. *Journal*, vol(issue), pages."
+          text = text.replace(/^(.*?\)\.\s)(.*?)(\.\s)/, '$1<i>$2</i>$3');
+
+          html += '<div class="pub-entry">';
+          html += '<div class="pub-text">' + text;
+          if (doiLink) html += ' <a href="' + escapeHtml(doiLink) + '" target="_blank">' + escapeHtml(doiLink) + '</a>';
+          html += '</div>';
+          if (abstractLink) {
+            html += '<div class="pub-abstract"><a href="' + escapeHtml(abstractLink) + '" target="_blank"><i>See Abstract</i> <span class="ext-icon">&#8599;</span></a></div>';
+          }
+          html += '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+
+        // 페이지네이션 표시
+        if (totalPages > 1) {
+          var pag = document.getElementById('pagination');
+          var prevBtn = document.getElementById('prevPage');
+          var nextBtn = document.getElementById('nextPage');
+          var pageInfoEl = document.getElementById('pageInfo');
+
+          pageInfoEl.textContent = pubPage + ' / ' + totalPages;
+          prevBtn.disabled = (pubPage <= 1);
+          nextBtn.disabled = (pubPage >= totalPages);
+          pag.style.display = 'flex';
+
+          prevBtn.onclick = function() { if (pubPage > 1) renderPublications(pubPage - 1); };
+          nextBtn.onclick = function() { if (pubPage < totalPages) renderPublications(pubPage + 1); };
+        }
+
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Ongoing Research 렌더링 ── */
+    async function renderOngoingResearch() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['01_ongoing_research', '02_ongoing_study']);
+        let html = '';
+
+        // ONGOING RESEARCH
+        const research = data['01_ongoing_research'] || [];
+        html += '<div class="section-title">ONGOING RESEARCH</div>';
+        if (research.error) {
+          html += '<div class="content-item" style="color:#c66;">' + research.error + '</div>';
+        } else {
+          research.forEach(function(row) {
+            html += '<div class="content-item">' + escapeHtml(row.content) + '</div>';
+          });
+        }
+
+        // ONGOING STUDY
+        const study = data['02_ongoing_study'] || [];
+        html += '<div class="section-title">ONGOING STUDY</div>';
+        if (study.error) {
+          html += '<div class="content-item" style="color:#c66;">' + study.error + '</div>';
+        } else {
+          study.forEach(function(row) {
+            html += '<div class="content-item">' + escapeHtml(row.content) + '</div>';
+          });
+        }
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Research Interests 렌더링 ── */
+    async function renderResearchInterests() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['04_reaserch_interest']);
+        const rows = data['04_reaserch_interest'] || [];
+
+        if (rows.error) {
+          showErrorScreen();
+          return;
+        }
+
+        let html = '<div class="section-title">RESEARCH INTERESTS</div>';
+        rows.forEach(function(row) {
+          html += '<div class="content-bullet">' + escapeHtml(row.content) + '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Presentations 렌더링 ── */
+    async function renderPresentations() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['06_presentations']);
+        const rows = data['06_presentations'] || [];
+
+        if (rows.error) {
+          showErrorScreen();
+          return;
+        }
+
+        // no. 내림차순 (최신이 위)
+        rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+
+        let html = '<div class="section-title">PRESENTATIONS</div>';
+        rows.forEach(function(row) {
+          var text = escapeHtml(row.content || '');
+          // "Author (Year). Title. Rest" → Title 부분 이탤릭 처리
+          text = text.replace(/^(.*?\)\.\s)(.*?)(\.\s)/, '$1<i>$2</i>$3');
+          html += '<div class="content-hanging">' + text + '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Discussion Participant 렌더링 ── */
+    async function renderDiscussion() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['07_discussion_participant']);
+        const rows = data['07_discussion_participant'] || [];
+
+        if (rows.error) {
+          showErrorScreen();
+          return;
+        }
+
+        // no. 내림차순 (최신이 위)
+        rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+
+        let html = '<div class="section-title">DISCUSSION PARTICIPANT</div>';
+        rows.forEach(function(row) {
+          var title = escapeHtml(row.content || '');
+          var dateRegion = escapeHtml(row['data/region'] || '');
+          var desc = escapeHtml(row.deciption || '');
+
+          html += '<div class="disc-entry">';
+          html += '<div class="disc-title-line">';
+          html += '<span class="disc-title">' + title + '</span>';
+          if (dateRegion) html += '<span class="disc-date">(' + dateRegion + ')</span>';
+          html += '</div>';
+          if (desc) html += '<div class="disc-desc">' + desc + '</div>';
+          html += '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Professional Experience 렌더링 ── */
+    async function renderProfessional() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['11_profession_experience']);
+        const rows = data['11_profession_experience'] || [];
+
+        if (rows.error) {
+          showErrorScreen();
+          return;
+        }
+
+        // no. 내림차순
+        rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+
+        let html = '<div class="section-title">PROFESSIONAL EXPERIENCES</div>';
+        rows.forEach(function(row) {
+          var org = escapeHtml(row.organization || '');
+          var roleDesc = row['role/description'] || '';
+          var period = escapeHtml(row.period || '');
+
+          html += '<div class="prof-entry">';
+          html += '<div class="prof-org">' + org + '</div>';
+
+          if (roleDesc) {
+            // "Role Title: description" 또는 "Role Title"만
+            var colonIdx = roleDesc.indexOf(':');
+            var roleHtml = '';
+            if (colonIdx > -1) {
+              roleHtml = '<span class="prof-role-title">' + escapeHtml(roleDesc.substring(0, colonIdx)) + '</span>: ' + escapeHtml(roleDesc.substring(colonIdx + 1).trim());
+            } else {
+              roleHtml = '<span class="prof-role-title">' + escapeHtml(roleDesc) + '</span>';
+            }
+            html += '<div class="prof-detail">';
+            html += '<div class="prof-role-line"><span>' + roleHtml + '</span><span class="prof-period">' + period + '</span></div>';
+            html += '</div>';
+          } else if (period) {
+            html += '<div class="prof-period-only">' + period + '</div>';
+          }
+
+          html += '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Teaching Experience 렌더링 ── */
+    async function renderTeaching() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['08_teaching_experience-1', '09_teaching_experience-2']);
+        let html = '<div class="section-title">TEACHING EXPERIENCE</div>';
+
+        // ── 08: Chungcheongnam-do (organization + subject/role + sub schools) ──
+        var t1 = data['08_teaching_experience-1'] || [];
+        if (!t1.error) {
+          var mains1 = t1.filter(function(r) { return r.category == 1; });
+          var subs1 = t1.filter(function(r) { return r.category == 2; });
+
+          mains1.forEach(function(m) {
+            html += '<div class="teach-block">';
+            html += '<div class="teach-org-line">';
+            html += '<span class="teach-org-name">' + escapeHtml(m.organization || m['organization/subject/role'] || '') + '</span>';
+            if (m.period) html += '<span class="teach-period">' + escapeHtml(m.period) + '</span>';
+            html += '</div>';
+            var role = m['subject/role'] || '';
+            if (role) html += '<div class="teach-role">' + escapeHtml(role) + '</div>';
+
+            var children = subs1.filter(function(s) { return s.upper_level == m.no_ || s.upper_level == (m.no_num || m.no_); });
+            children.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+            children.forEach(function(c) {
+              html += '<div class="teach-sub">';
+              html += '<span class="teach-sub-name">' + escapeHtml(c.organization || c['organization/subject/role'] || '') + '</span>';
+              if (c.period) html += '<span class="teach-period">' + escapeHtml(c.period) + '</span>';
+              html += '</div>';
+            });
+            html += '</div>';
+          });
+        }
+
+        // ── 09: KNUE (organization + grouped by role + course items) ──
+        var t2 = data['09_teaching_experience-2'] || [];
+        if (!t2.error) {
+          var mains2 = t2.filter(function(r) { return r.category == 1; });
+          var subs2 = t2.filter(function(r) { return r.category == 2; });
+
+          mains2.forEach(function(m) {
+            html += '<div class="teach-block">';
+            html += '<div class="teach-org-line">';
+            html += '<span class="teach-org-name">' + escapeHtml(m['organization/subject/role'] || m.organization || '') + '</span>';
+            if (m.period) html += '<span class="teach-period">' + escapeHtml(m.period) + '</span>';
+            html += '</div>';
+
+            var children = subs2.filter(function(s) { return s.upper_level == m.no_ || s.upper_level == (m.no_num || m.no_); });
+            children.sort(function(a, b) { return (a.no_ || a.no_num || 0) - (b.no_ || b.no_num || 0); });
+
+            // 역할별 그룹핑
+            var currentRole = '';
+            children.forEach(function(c) {
+              var role = c['organization/subject/role'] || '';
+              if (role !== currentRole) {
+                currentRole = role;
+                html += '<div class="teach-role">' + escapeHtml(role) + '</div>';
+              }
+              html += '<div class="teach-sub">';
+              html += '<span class="teach-sub-name">' + escapeHtml(c.course_name || '') + '</span>';
+              if (c.period) html += '<span class="teach-period">' + escapeHtml(c.period) + '</span>';
+              html += '</div>';
+            });
+            html += '</div>';
+          });
+        }
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Certification 렌더링 ── */
+    async function renderCertification() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['10_certicication']);
+        const rows = data['10_certicication'] || [];
+
+        if (rows.error) { showErrorScreen(); return; }
+
+        rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+
+        let html = '<div class="section-title">CERTIFICATION</div>';
+        rows.forEach(function(row) {
+          var name = escapeHtml(row.name || '');
+          var desc = escapeHtml(row.description || '');
+          var date = escapeHtml(row.date || '');
+
+          html += '<div class="cert-entry">';
+          html += '<div class="cert-name">' + name + '</div>';
+          html += '<div class="cert-detail">';
+          html += '<span class="cert-desc">' + desc + '</span>';
+          html += '<span class="cert-date">' + date + '</span>';
+          html += '</div>';
+          html += '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── Awards and Scholarships 렌더링 ── */
+    async function renderAwards() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['12_awards_and_scholarships']);
+        const rows = data['12_awards_and_scholarships'] || [];
+
+        if (rows.error) {
+          showErrorScreen();
+          return;
+        }
+
+        rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
+
+        let html = '<div class="section-title">AWARDS AND SCHOLARSHIPS</div>';
+        rows.forEach(function(row) {
+          var title = escapeHtml(row.awards_and_scholarships || '');
+          var org = escapeHtml(row.organization || '');
+          var date = escapeHtml(row.date || '');
+
+          html += '<div class="award-entry">';
+          html += '<div class="award-title">' + title + '</div>';
+          html += '<div class="award-detail">';
+          html += '<span>' + org + '</span>';
+          html += '<span class="award-date">' + date + '</span>';
+          html += '</div>';
+          html += '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    /* ── 에러 화면 (중앙 표시 + RELOAD 버튼) ── */
+    var currentPage = 'cover';
+
+    function showErrorScreen() {
+      contentOverlay.style.display = 'none';
+      var errorDiv = document.querySelector('.error-screen');
+      if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'error-screen';
+        errorDiv.innerHTML =
+          '<p>The data failed to load properly.</p>' +
+          '<button id="reloadBtn">RELOAD</button>';
+        document.querySelector('.cover-wrapper').appendChild(errorDiv);
+        document.getElementById('reloadBtn').addEventListener('click', function() {
+          hideErrorScreen();
+          // 캐시 초기화 후 현재 탭 재시도
+          for (var key in cache) delete cache[key];
+          if (currentPage === 'ongoing-research') {
+            renderOngoingResearch();
+          } else if (currentPage === 'education') {
+            renderEducation();
+          } else if (currentPage === 'research-interests') {
+            renderResearchInterests();
+          } else if (currentPage === 'publications') {
+            pubData = []; renderPublications(1);
+          } else if (currentPage === 'presentations') {
+            renderPresentations();
+          } else if (currentPage === 'discussion') {
+            renderDiscussion();
+          } else if (currentPage === 'teaching') {
+            renderTeaching();
+          } else if (currentPage === 'professional') {
+            renderProfessional();
+          } else if (currentPage === 'certification') {
+            renderCertification();
+          } else if (currentPage === 'awards') {
+            renderAwards();
+          }
+        });
+      }
+      errorDiv.style.display = 'flex';
+    }
+
+    function hideErrorScreen() {
+      var errorDiv = document.querySelector('.error-screen');
+      if (errorDiv) errorDiv.style.display = 'none';
+    }
+
+    /* ── Education 렌더링 ── */
+    async function renderEducation() {
+      contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
+      contentOverlay.style.display = 'block';
+
+      try {
+        const data = await fetchFromGAS(['03_education']);
+        const rows = data['03_education'] || [];
+
+        if (rows.error) {
+          showErrorScreen();
+          return;
+        }
+
+        // no. 내림차순 (최신이 위)
+        rows.sort(function(a, b) { return b.no_num - a.no_num; });
+
+        let html = '<div class="section-title">EDUCATION</div>';
+
+        rows.forEach(function(row) {
+          var school = escapeHtml(row.school_name || '');
+          var region = escapeHtml(row.region || '');
+          var period = escapeHtml(row.period || '');
+          var degree = row['degree/major'] ? escapeHtml(row['degree/major']) : '';
+          var thesis = row.thesis ? escapeHtml(row.thesis) : '';
+          var advisor = row.advisor ? escapeHtml(row.advisor) : '';
+          var link = row.abstrat_link || '';
+
+          html += '<div class="edu-entry">';
+
+          if (degree) {
+            // 대학: 학교명 + 지역 (한 줄), 학위+기간, 논문, 지도교수+See Abstract
+            html += '<div class="edu-school-line">';
+            html += '<span><span class="edu-school-name">' + school + '</span>' + (region ? ', ' + region : '') + '</span>';
+            html += '</div>';
+            html += '<div class="edu-detail">';
+            html += '<div class="edu-degree-line"><span>' + degree + '</span><span class="edu-period">' + period + '</span></div>';
+            if (thesis) html += '<div>Thesis: ' + thesis + '</div>';
+            if (advisor && link) {
+              html += '<div class="edu-advisor-line"><span>Advisor: ' + advisor + '</span>';
+              html += '<a href="' + escapeHtml(link) + '" target="_blank"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
+            } else if (advisor) {
+              html += '<div>Advisor: ' + advisor + '</div>';
+            } else if (link) {
+              html += '<div style="text-align:right;"><a href="' + escapeHtml(link) + '" target="_blank"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
+            }
+            html += '</div>';
+          } else {
+            // 초중고: 학교명 + 지역 + 기간 한 줄
+            html += '<div class="edu-school-line">';
+            html += '<span><span class="edu-school-name">' + school + '</span>, ' + region + '</span>';
+            html += '<span class="edu-period">' + period + '</span>';
+            html += '</div>';
+          }
+
+          html += '</div>';
+        });
+
+        contentOverlay.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        showErrorScreen();
+      }
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /* ── 탭 클릭 ── */
+    document.querySelectorAll('.index-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var page = tab.dataset.page;
+        currentPage = page;
+        hideErrorScreen();
+
+        // 활성 탭 표시
+        document.querySelectorAll('.index-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+
+        if (page === 'cover') {
+          img.src = 'img/cv_cover.png';
+          emailOverlay.style.display = '';
+          contentOverlay.style.display = 'none';
+          contentOverlay.innerHTML = '';
+          document.getElementById('pagination').style.display = 'none';
+        } else {
+          img.src = 'img/cv_innerpage.png';
+          emailOverlay.style.display = 'none';
+          document.getElementById('pagination').style.display = 'none';
+
+          if (page === 'ongoing-research') {
+            renderOngoingResearch();
+          } else if (page === 'education') {
+            renderEducation();
+          } else if (page === 'research-interests') {
+            renderResearchInterests();
+          } else if (page === 'publications') {
+            pubData = []; renderPublications(1);
+          } else if (page === 'presentations') {
+            renderPresentations();
+          } else if (page === 'discussion') {
+            renderDiscussion();
+          } else if (page === 'teaching') {
+            renderTeaching();
+          } else if (page === 'professional') {
+            renderProfessional();
+          } else if (page === 'certification') {
+            renderCertification();
+          } else if (page === 'awards') {
+            renderAwards();
+          } else {
+            contentOverlay.style.display = 'none';
+            contentOverlay.innerHTML = '';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
