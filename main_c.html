@@ -48,6 +48,71 @@
       color: #c4a265;
     }
 
+    /* Cover Status Text */
+    .cover-status {
+      position: absolute;
+      top: 80%;
+      left: 52%;
+      transform: translateX(calc(-50% + 0.15em / 2));
+      z-index: 3;
+      text-align: center;
+      transition: opacity 0.5s ease;
+    }
+    .cover-status.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cover-status-text {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 1.25vw;
+      color: #D4A94C;
+      letter-spacing: 0.2em;
+      font-style: italic;
+      font-weight: bold;
+    }
+    .cover-status .retry-btn {
+      display: inline-block;
+      margin-top: 1vh;
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 0.65vw;
+      letter-spacing: 0.15em;
+      color: #C4A265;
+      background: transparent;
+      border: 1px solid #C4A26566;
+      border-radius: 3px;
+      padding: 0.3em 1.2em;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .cover-status .retry-btn:hover {
+      background: #C4A26522;
+      border-color: #C4A265;
+    }
+
+    /* Tab reveal animation */
+    .index-tab {
+      opacity: 0;
+      transform: translateX(calc(9vw - 60px));
+      transition: opacity 0.4s ease, transform 0.5s ease 0.6s, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    .index-tab.revealed {
+      opacity: 1;
+      transform: translateX(calc(9vw - 60px));
+      background: linear-gradient(135deg, #4a3c28 0%, #6b5a3e 50%, #4a3c28 100%);
+      color: #e8d5a8;
+      border-color: #c4a265;
+    }
+    .index-tab.settled {
+      transform: translateX(0);
+      background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
+      color: transparent;
+      border-color: #6b5a3e;
+    }
+    .index-tab[data-page="cover"] {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
     /* Content Overlay */
     .content-overlay {
       position: absolute;
@@ -92,41 +157,6 @@
       color: #999;
       font-style: italic;
       line-height: 1.8;
-    }
-
-    /* Error / Reload */
-    .error-screen {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 3;
-    }
-    .error-screen p {
-      font-family: "Times New Roman", Times, serif;
-      font-size: 1.1vw;
-      color: #5A4632;
-      margin-bottom: 2.5vh;
-      letter-spacing: 0.03em;
-    }
-    .error-screen button {
-      font-family: "Times New Roman", Times, serif;
-      font-size: 0.9vw;
-      letter-spacing: 0.15em;
-      color: #C4A265;
-      background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
-      border: 1px solid #6b5a3e;
-      border-radius: 4px;
-      padding: 0.6em 2em;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s, border-color 0.3s;
-    }
-    .error-screen button:hover {
-      background: linear-gradient(135deg, #4a3c28 0%, #6b5a3e 50%, #4a3c28 100%);
-      color: #e8d5a8;
-      border-color: #C4A265;
     }
 
     /* Education Entry */
@@ -515,6 +545,129 @@
       color: #3C2415;
     }
 
+    /* Abstract Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 8, 5, 0.75);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-container {
+      position: relative;
+      width: 51vw;
+      height: 93vh;
+      background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
+      border: 1px solid #6b5a3e;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8em 1.5em;
+      border-bottom: 1px solid #6b5a3e;
+    }
+    .modal-title {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1vw;
+      font-style: italic;
+      color: #C4A265;
+      letter-spacing: 0.1em;
+    }
+    .modal-close {
+      background: none;
+      border: 1px solid #6b5a3e;
+      border-radius: 4px;
+      color: #C4A265;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 0.85vw;
+      padding: 0.3em 1em;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .modal-close:hover {
+      background: #6b5a3e;
+      color: #e8d5a8;
+      border-color: #C4A265;
+    }
+    .modal-body {
+      flex: 1;
+      background: #FDF8EE;
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .modal-loading {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #FDF8EE;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+      transition: opacity 0.4s ease;
+    }
+    .modal-loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .modal-loading p {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 0.95vw;
+      color: #5A4632;
+      margin-top: 2vh;
+      letter-spacing: 0.08em;
+      font-style: italic;
+    }
+    .modal-spinner {
+      width: 2.5vw;
+      height: 2.5vw;
+      border: 3px solid #E8DCC8;
+      border-top: 3px solid #C4A265;
+      border-radius: 50%;
+      animation: modalSpin 1s linear infinite;
+    }
+    @keyframes modalSpin {
+      to { transform: rotate(360deg); }
+    }
+    .modal-progress-bar {
+      width: 12vw;
+      height: 3px;
+      background: #E8DCC8;
+      border-radius: 2px;
+      margin-top: 1.5vh;
+      overflow: hidden;
+    }
+    .modal-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #C4A265, #D4A94C, #E0BE6A);
+      border-radius: 2px;
+      animation: modalProgress 2.5s ease-in-out infinite;
+    }
+    @keyframes modalProgress {
+      0% { width: 0%; }
+      50% { width: 80%; }
+      100% { width: 100%; }
+    }
+
     /* Index Tabs */
     .index-tabs {
       position: absolute;
@@ -532,14 +685,16 @@
       position: relative;
       display: flex;
       align-items: center;
-      height: calc(100% * 1.0978 / 13);
+      justify-content: flex-end;
+      text-align: right;
+      height: calc(100% * 1.065 / 13);
       padding: 0.3em 3.3vw 0.3em 1.8vw;
       margin-left: -1vw;
       background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
       border: 1px solid #6b5a3e;
       border-left: none;
       border-radius: 0 4px 4px 0;
-      color: #c4a265;
+      color: transparent;
       font-family: "Georgia", "Times New Roman", serif;
       font-style: italic;
       font-size: 0.75vw;
@@ -565,7 +720,7 @@
     }
     .tab-abbr {
       position: absolute;
-      right: calc(0.5vw + 2px);
+      right: 0.5vw;
       top: 50%;
       transform: translateY(-50%);
       font-size: 0.85vw;
@@ -574,13 +729,17 @@
       opacity: 0.6;
       letter-spacing: 0.02em;
     }
-    .index-tab:hover .tab-abbr { opacity: 0.9; }
+    .index-tab:hover .tab-abbr,
+    .index-tab.active .tab-abbr { opacity: 0.9; }
   </style>
 </head>
 <body>
   <div class="cover-wrapper">
     <img src="img/cv_cover.png" alt="CV Cover">
     <span class="email-overlay">nicobass5735@gmail.com</span>
+    <div class="cover-status" id="coverStatus">
+      <div class="cover-status-text" id="coverStatusText">Loading</div>
+    </div>
     <div class="content-overlay" id="contentOverlay"></div>
     <div class="pagination" id="pagination" style="display:none;">
       <button id="prevPage">&#9664;</button>
@@ -600,6 +759,27 @@
       <div class="index-tab" data-page="certification">Certification<span class="tab-abbr">CT</span></div>
       <div class="index-tab" data-page="awards">Awards and Scholarships<span class="tab-abbr">AS</span></div>
       <div class="index-tab" data-page="ongoing-research">Ongoing Research<span class="tab-abbr">OR</span></div>
+    </div>
+  </div>
+
+  <!-- Abstract Modal -->
+  <div class="modal-overlay" id="abstractModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <span class="modal-title">Abstract</span>
+        <div style="display:flex;gap:0.6em;">
+          <button class="modal-close" id="modalPrint">PDF DOWNLOAD</button>
+          <button class="modal-close" id="modalClose">CLOSE</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-loading" id="modalLoading">
+          <div class="modal-spinner"></div>
+          <div class="modal-progress-bar"><div class="modal-progress-fill"></div></div>
+          <p>Loading document...</p>
+        </div>
+        <iframe id="modalIframe" src="" sandbox="allow-same-origin allow-scripts"></iframe>
+      </div>
     </div>
   </div>
 
@@ -635,17 +815,64 @@
       return result;
     }
 
-    /* ── 페이지 로드 시 모든 데이터 미리 불러오기 ── */
-    (async function preload() {
+    /* ── 페이지 로드 시 전체 로딩 + 탭 순차 등장 ── */
+    const ALL_SHEETS = [
+      '01_ongoing_research', '02_ongoing_study', '03_education',
+      '04_reaserch_interest', '05_publications', '06_presentations',
+      '07_discussion_participant', '08_teaching_experience-1',
+      '09_teaching_experience-2', '10_certicication',
+      '11_profession_experience', '12_awards_and_scholarships'
+    ];
+    const TAB_ORDER = [
+      'education', 'research-interests', 'publications', 'presentations',
+      'discussion', 'teaching', 'professional', 'certification',
+      'awards', 'ongoing-research'
+    ];
+    var dataReady = false;
+
+    function revealTabsSequentially() {
+      TAB_ORDER.forEach(function(page, i) {
+        setTimeout(function() {
+          var tab = document.querySelector('.index-tab[data-page="' + page + '"]');
+          if (tab) {
+            tab.classList.add('revealed');
+            setTimeout(function() {
+              tab.classList.add('settled');
+            }, 800);
+          }
+        }, i * 150);
+      });
+    }
+
+    async function preload() {
+      var statusText = document.getElementById('coverStatusText');
+      var statusDiv = document.getElementById('coverStatus');
+      statusText.textContent = 'Loading';
+
       try {
-        await fetchFromGAS([
-          '01_ongoing_research', '02_ongoing_study', '03_education', '04_reaserch_interest', '05_publications', '06_presentations', '07_discussion_participant', '08_teaching_experience-1', '09_teaching_experience-2', '10_certicication', '11_profession_experience', '12_awards_and_scholarships'
-        ]);
+        var url = GAS_URL + '?sheets=' + encodeURIComponent(ALL_SHEETS.join(','));
+        var res = await fetch(url);
+        if (!res.ok) throw new Error('Network error: ' + res.status);
+        var json = await res.json();
+        for (var key in json) { cache[key] = json[key]; }
+
+        dataReady = true;
+        statusText.textContent = 'Ready';
+        revealTabsSequentially();
         console.log('데이터 프리로드 완료');
       } catch (e) {
-        console.warn('프리로드 실패 (탭 클릭 시 재시도):', e);
+        statusDiv.innerHTML =
+          '<div class="cover-status-text">Loading failed</div>' +
+          '<button class="retry-btn" id="retryBtn">RETRY</button>';
+        document.getElementById('retryBtn').addEventListener('click', function() {
+          statusDiv.innerHTML = '<div class="cover-status-text" id="coverStatusText">Loading</div>';
+          preload();
+        });
+        console.warn('프리로드 실패:', e);
       }
-    })();
+    }
+
+    preload();
 
     /* ── Publications 렌더링 (페이지네이션) ── */
     var pubData = [];
@@ -661,7 +888,7 @@
         if (pubData.length === 0) {
           const data = await fetchFromGAS(['05_publications']);
           const rows = data['05_publications'] || [];
-          if (rows.error) { showErrorScreen(); return; }
+          if (rows.error) {  return; }
           rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
           pubData = rows;
         }
@@ -681,15 +908,15 @@
           var doiLink = row.doi_link || '';
           var abstractLink = row.abstrat_link || '';
 
-          // 저널명 이탤릭 처리: "Author (Year). Title. *Journal*, vol(issue), pages."
-          text = text.replace(/^(.*?\)\.\s)(.*?)(\.\s)/, '$1<i>$2</i>$3');
+          // 학술지명 이탤릭 처리: "Author (Year). Title. *Journal Name*, vol(issue), pages."
+          text = text.replace(/(.*\.\s)([A-Z][a-zA-Z\s&]+?),\s(\d+)(\(\d+\))/, '$1<i>$2, $3</i>$4');
 
           html += '<div class="pub-entry">';
           html += '<div class="pub-text">' + text;
           if (doiLink) html += ' <a href="' + escapeHtml(doiLink) + '" target="_blank">' + escapeHtml(doiLink) + '</a>';
           html += '</div>';
           if (abstractLink) {
-            html += '<div class="pub-abstract"><a href="' + escapeHtml(abstractLink) + '" target="_blank"><i>See Abstract</i> <span class="ext-icon">&#8599;</span></a></div>';
+            html += '<div class="pub-abstract"><a href="#" class="abstract-link" data-url="' + escapeHtml(abstractLink) + '"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
           }
           html += '</div>';
         });
@@ -714,7 +941,7 @@
 
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -752,7 +979,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -766,7 +993,7 @@
         const rows = data['04_reaserch_interest'] || [];
 
         if (rows.error) {
-          showErrorScreen();
+          
           return;
         }
 
@@ -778,7 +1005,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -792,7 +1019,7 @@
         const rows = data['06_presentations'] || [];
 
         if (rows.error) {
-          showErrorScreen();
+          
           return;
         }
 
@@ -810,7 +1037,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -824,7 +1051,7 @@
         const rows = data['07_discussion_participant'] || [];
 
         if (rows.error) {
-          showErrorScreen();
+          
           return;
         }
 
@@ -849,7 +1076,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -863,7 +1090,7 @@
         const rows = data['11_profession_experience'] || [];
 
         if (rows.error) {
-          showErrorScreen();
+          
           return;
         }
 
@@ -901,7 +1128,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -977,7 +1204,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -990,7 +1217,7 @@
         const data = await fetchFromGAS(['10_certicication']);
         const rows = data['10_certicication'] || [];
 
-        if (rows.error) { showErrorScreen(); return; }
+        if (rows.error) {  return; }
 
         rows.sort(function(a, b) { return (b.no_ || b.no_num || 0) - (a.no_ || a.no_num || 0); });
 
@@ -1012,7 +1239,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -1026,7 +1253,7 @@
         const rows = data['12_awards_and_scholarships'] || [];
 
         if (rows.error) {
-          showErrorScreen();
+          
           return;
         }
 
@@ -1050,57 +1277,11 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
-    /* ── 에러 화면 (중앙 표시 + RELOAD 버튼) ── */
     var currentPage = 'cover';
-
-    function showErrorScreen() {
-      contentOverlay.style.display = 'none';
-      var errorDiv = document.querySelector('.error-screen');
-      if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.className = 'error-screen';
-        errorDiv.innerHTML =
-          '<p>The data failed to load properly.</p>' +
-          '<button id="reloadBtn">RELOAD</button>';
-        document.querySelector('.cover-wrapper').appendChild(errorDiv);
-        document.getElementById('reloadBtn').addEventListener('click', function() {
-          hideErrorScreen();
-          // 캐시 초기화 후 현재 탭 재시도
-          for (var key in cache) delete cache[key];
-          if (currentPage === 'ongoing-research') {
-            renderOngoingResearch();
-          } else if (currentPage === 'education') {
-            renderEducation();
-          } else if (currentPage === 'research-interests') {
-            renderResearchInterests();
-          } else if (currentPage === 'publications') {
-            pubData = []; renderPublications(1);
-          } else if (currentPage === 'presentations') {
-            renderPresentations();
-          } else if (currentPage === 'discussion') {
-            renderDiscussion();
-          } else if (currentPage === 'teaching') {
-            renderTeaching();
-          } else if (currentPage === 'professional') {
-            renderProfessional();
-          } else if (currentPage === 'certification') {
-            renderCertification();
-          } else if (currentPage === 'awards') {
-            renderAwards();
-          }
-        });
-      }
-      errorDiv.style.display = 'flex';
-    }
-
-    function hideErrorScreen() {
-      var errorDiv = document.querySelector('.error-screen');
-      if (errorDiv) errorDiv.style.display = 'none';
-    }
 
     /* ── Education 렌더링 ── */
     async function renderEducation() {
@@ -1112,7 +1293,7 @@
         const rows = data['03_education'] || [];
 
         if (rows.error) {
-          showErrorScreen();
+          
           return;
         }
 
@@ -1142,11 +1323,11 @@
             if (thesis) html += '<div>Thesis: ' + thesis + '</div>';
             if (advisor && link) {
               html += '<div class="edu-advisor-line"><span>Advisor: ' + advisor + '</span>';
-              html += '<a href="' + escapeHtml(link) + '" target="_blank"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
+              html += '<a href="#" class="abstract-link" data-url="' + escapeHtml(link) + '"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
             } else if (advisor) {
               html += '<div>Advisor: ' + advisor + '</div>';
             } else if (link) {
-              html += '<div style="text-align:right;"><a href="' + escapeHtml(link) + '" target="_blank"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
+              html += '<div style="text-align:right;"><a href="#" class="abstract-link" data-url="' + escapeHtml(link) + '"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
             }
             html += '</div>';
           } else {
@@ -1163,7 +1344,7 @@
         contentOverlay.innerHTML = html;
       } catch (err) {
         console.error(err);
-        showErrorScreen();
+        
       }
     }
 
@@ -1173,26 +1354,69 @@
       return div.innerHTML;
     }
 
+    /* ── Abstract 모달 ── */
+    var modalOverlay = document.getElementById('abstractModal');
+    var modalIframe = document.getElementById('modalIframe');
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalPrint').addEventListener('click', function() {
+      var src = document.getElementById('modalIframe').src;
+      if (src) {
+        var pdfUrl = src.replace(/\/preview.*$/, '/export?format=pdf');
+        window.open(pdfUrl, '_blank');
+      }
+    });
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    function openAbstractModal(url) {
+      var previewUrl = url.replace(/\/edit.*$/, '/preview');
+      var loading = document.getElementById('modalLoading');
+      loading.classList.remove('hidden');
+      modalIframe.src = previewUrl;
+      modalIframe.onload = function() {
+        loading.classList.add('hidden');
+      };
+      modalOverlay.classList.add('open');
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('open');
+      modalIframe.src = '';
+      document.getElementById('modalLoading').classList.remove('hidden');
+    }
+
+    // See Abstract 클릭 이벤트 위임
+    document.getElementById('contentOverlay').addEventListener('click', function(e) {
+      var link = e.target.closest('.abstract-link');
+      if (link) {
+        e.preventDefault();
+        openAbstractModal(link.getAttribute('data-url'));
+      }
+    });
+
     /* ── 탭 클릭 ── */
     document.querySelectorAll('.index-tab').forEach(function(tab) {
       tab.addEventListener('click', function() {
         var page = tab.dataset.page;
         currentPage = page;
-        hideErrorScreen();
 
-        // 활성 탭 표시
         document.querySelectorAll('.index-tab').forEach(function(t) { t.classList.remove('active'); });
         tab.classList.add('active');
 
+        var coverStatus = document.getElementById('coverStatus');
+
         if (page === 'cover') {
-          img.src = 'img/cv_cover.png';
+          img.src = 'img/cv_cover.png?v=' + Date.now();
           emailOverlay.style.display = '';
           contentOverlay.style.display = 'none';
           contentOverlay.innerHTML = '';
           document.getElementById('pagination').style.display = 'none';
+          if (!dataReady) coverStatus.classList.remove('hidden');
         } else {
-          img.src = 'img/cv_innerpage.png';
+          img.src = 'img/cv_innerpage.png?v=' + Date.now();
           emailOverlay.style.display = 'none';
+          coverStatus.classList.add('hidden');
           document.getElementById('pagination').style.display = 'none';
 
           if (page === 'ongoing-research') {
