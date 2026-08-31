@@ -27,6 +27,22 @@
       position: relative;
       z-index: 2;
     }
+    /* Name overlay */
+    .name-overlay {
+      position: absolute;
+      top: 42%;
+      left: 53.5%;
+      transform: translateX(-50%);
+      color: #d4b87a;
+      font-size: clamp(28px, 4.5vw, 72px);
+      font-family: "Georgia", "Times New Roman", serif;
+      font-style: italic;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      z-index: 3;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
     .email-overlay {
       position: absolute;
       top: 55.5%;
@@ -703,8 +719,8 @@
       align-items: center;
       justify-content: flex-end;
       text-align: right;
-      height: calc(100% * 1.065 / 13);
-      padding: 0.3em 3.3vw 0.3em 2.5vw;
+      height: calc(100% / 14.5);
+      padding: 0.1em 3.3vw 0.1em 2.5vw;
       margin-left: -1vw;
       background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
       border: 1px solid #6b5a3e;
@@ -822,6 +838,7 @@
 <body>
   <div class="cover-wrapper">
     <img src="img/cv_cover.png" alt="CV Cover">
+    <span class="name-overlay">Jongsu Kim</span>
     <span class="email-overlay">nicobass5735@gmail.com</span>
     <div class="cover-status" id="coverStatus">
       <div class="cover-status-text" id="coverStatusText">Preparing</div>
@@ -836,6 +853,7 @@
 
     <div class="index-tabs">
       <div class="index-tab active" data-page="cover">Cover<span class="tab-abbr">C</span></div>
+      <div class="index-tab" data-page="introduction">Introduction<span class="tab-abbr">I</span></div>
       <div class="index-tab" data-page="education">Education<span class="tab-abbr">E</span></div>
       <div class="index-tab" data-page="research-interests">Research Interests<span class="tab-abbr">RI</span></div>
       <div class="index-tab" data-page="publications">Publications<span class="tab-abbr">P</span></div>
@@ -942,7 +960,6 @@
     img.addEventListener('load', function() {
       if (img.src.indexOf('cv_cover.png') !== -1) {
         captureCoverNatural();
-        /* 커버 이미지 로드 완료 → Cover 탭 표시 */
         var coverTab = document.querySelector('.index-tab[data-page="cover"]');
         if (coverTab) coverTab.classList.add('cover-ready');
       }
@@ -1030,7 +1047,7 @@
 
     function revealTabsSequentially() {
       // 이미 개별 로딩에서 표시되지 않은 탭이 있으면 마저 표시
-      var tabs = ['education','research-interests','publications','presentations',
+      var tabs = ['introduction','education','research-interests','publications','presentations',
         'discussion','teaching','professional','certification','awards','ongoing-research'];
       tabs.forEach(function(page, i) {
         var tab = document.querySelector('.index-tab[data-page="' + page + '"]');
@@ -1053,6 +1070,14 @@
       try {
         // Stage 1: Preparing
         await new Promise(function(r){ setTimeout(r, 300); });
+        
+        // Preparing 완료 → Introduction 탭 즉시 reveal
+        var introTab = document.querySelector('.index-tab[data-page="introduction"]');
+        if (introTab) {
+          introTab.classList.add('revealed');
+          setTimeout(function() { introTab.classList.add('settled'); }, 800);
+        }
+        
         statusText.textContent = 'Loading';
 
         // Stage 2: Loading (개별 시트 로딩)
@@ -1166,6 +1191,21 @@
     }
 
     /* ── Ongoing Research 렌더링 ── */
+    /* ── Introduction 렌더링 ── */
+    function renderIntroduction() {
+      contentOverlay.style.display = 'block';
+      var html = '<div class="section-title">INTRODUCTION</div>';
+      html += '<div style="margin-top:8vh;"></div>';
+      html += '<div class="content-item" style="line-height:2.2;">';
+      html += 'This website serves as Jongsu Kim\'s Curriculum Vitae (CV), covering everything from education to ongoing studies. ';
+      html += 'You can view each section by clicking the labels on the right, or download the full CV document by clicking the download button below.';
+      html += '</div>';
+      html += '<div style="margin-top:5vh;text-align:center;">';
+      html += '<a href="https://docs.google.com/document/d/1WDvdxvv3CkSPiprN1VkQT8VKdek7tNmkyS3NqRM1I3s/export?format=pdf" download="CV_Jongsu_Kim.pdf" style="display:inline-block;padding:0.7em 2.5em;font-family:Georgia,serif;font-size:clamp(14px,1.1vw,18px);font-style:italic;color:#3C2415;background:rgba(196,162,101,0.15);border:2px solid #C4A265;border-radius:5px;text-decoration:none;letter-spacing:0.1em;box-shadow:0 3px 10px rgba(0,0,0,0.15);transition:all 0.3s;">CV Download</a>';
+      html += '</div>';
+      contentOverlay.innerHTML = html;
+    }
+
     async function renderOngoingResearch() {
       contentOverlay.innerHTML = '<p class="loading">Loading...</p>';
       contentOverlay.style.display = 'block';
@@ -1707,7 +1747,9 @@
     /* ── 탭 클릭 ── */
     /* 콘텐츠 렌더 분기 헬퍼 */
     function renderPageContent(page) {
-      if (page === 'ongoing-research') {
+      if (page === 'introduction') {
+        renderIntroduction();
+      } else if (page === 'ongoing-research') {
         renderOngoingResearch();
       } else if (page === 'education') {
         renderEducation();
@@ -1766,7 +1808,8 @@
             // 이미지 교체 (이미 로드 완료이므로 즉시 렌더)
             img.src = coverImg.src;
             emailOverlay.style.display = '';
-            if (!dataReady) coverStatus.classList.remove('hidden');
+            document.querySelector('.name-overlay').style.display = '';
+            coverStatus.classList.remove('hidden');
           };
           coverImg.src = 'img/cv_cover.png?v=' + Date.now();
 
@@ -1780,6 +1823,7 @@
         } else {
           /* ── ★ cover → innerpage (배경 프리로드 후 콘텐츠) ── */
           emailOverlay.style.display = 'none';
+          document.querySelector('.name-overlay').style.display = 'none';
           coverStatus.classList.add('hidden');
           contentOverlay.style.display = 'none';
           contentOverlay.innerHTML = '';
