@@ -20,7 +20,7 @@ body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:ce
 .content-cards::-webkit-scrollbar{display:none;}
 .mng-tabs{position:absolute;top:8%;left:100%;bottom:2%;width:clamp(115px,12.5vw,170px);display:flex;flex-direction:column;gap:3px;overflow-y:auto;scrollbar-width:none;z-index:1;}
 .mng-tabs::-webkit-scrollbar{display:none;}
-.mng-tab{padding:1.05em .9em 1.05em 1.1em;font-family:Georgia,serif;font-size:clamp(12px,.88vw,16px);font-style:italic;font-weight:bold;color:#8a7a5a;background:rgba(240,235,225,.85);border:1px solid #d4c9b0;border-right:1px solid #d4c9b0;border-radius:4px 0 0 4px;cursor:pointer;text-align:left;line-height:1.2;transition:background .2s,color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
+.mng-tab{padding:.9em .9em .9em 1.1em;font-family:Georgia,serif;font-size:clamp(11px,.82vw,15px);font-style:italic;font-weight:bold;color:#8a7a5a;background:rgba(240,235,225,.85);border:1px solid #d4c9b0;border-right:1px solid #d4c9b0;border-radius:4px 0 0 4px;cursor:pointer;text-align:left;line-height:1.15;transition:background .2s,color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
 .mng-tab:hover{background:rgba(220,210,190,.95);color:#5a4632;}
 .mng-tab.active{background:rgba(60,36,21,.92);color:#e8d5a8;border-color:#6b5a3e;border-right-color:#6b5a3e;}
 .sec-title{font-size:clamp(18px,1.6vw,28px);font-weight:bold;color:#3C2415;margin:0;padding:0 0 .8vh;letter-spacing:.05em;text-decoration:underline;text-underline-offset:.4em;}
@@ -146,6 +146,7 @@ body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:ce
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwOI0P1oMCyJYfnTkzsZFfpMcDxGIwQvnHFlSfSyeB1-o08-Xmd1crX-wXE107HfY4L/exec';
 const TABS=[
+  {id:'cv-link',label:'CV Docs Link',sheet:'15_cv_link',type:'cvlink'},
   {id:'ongoing-research',label:'Ongoing Research',sheet:'01_ongoing_research',type:'simple',sortAsc:true},
   {id:'ongoing-study',label:'Ongoing Study',sheet:'02_ongoing_study',type:'simple',sortAsc:true},
   {id:'education',label:'Education',sheet:'03_education',type:'education'},
@@ -306,6 +307,83 @@ async function loadTab(tab,showOverlay){
   contentArea.innerHTML='<p class="loading-text">Loading...</p>';
   contentArea.scrollTop=0;
   if(showOverlay)showInlineLoading('Loading data...');
+
+  /* ── CV Link special tab ── */
+  if(tab.type==='cvlink'){
+    try{
+      const rows=await fetchSheet(tab.sheet);
+      const row=rows[0]||{};
+      const curUrl=row.url||row.URL||row.link||'';
+      const curDate=row.date||row.Date||'';
+
+      let hdr='<div class="sec-title">CV DOCS LINK</div>';
+      hdr+='<div class="toolbar"></div>';
+      document.getElementById('contentHeader').innerHTML=hdr;
+
+      let html='<div style="display:flex;align-items:flex-end;gap:.6em;margin-top:1vh;">';
+      html+='<div style="flex:1;min-width:0;"><label style="display:block;font-size:clamp(11px,.78vw,14px);color:#8a7a5a;font-weight:bold;margin-bottom:.25em;">Docs URL</label>';
+      html+='<input id="cvLinkUrl" value="'+esc(curUrl)+'" placeholder="https://docs.google.com/document/d/..." style="width:100%;padding:.5em .7em;font-family:\'Times New Roman\',serif;font-size:clamp(13px,.95vw,17px);border:1px solid #d4c9b0;border-radius:3px;background:#fdfcfa;color:#3C2415;outline:none;box-sizing:border-box;">';
+      html+='</div>';
+      html+='<button class="btn btn-save" id="cvLinkApplyBtn" style="padding:0 1.4em;white-space:nowrap;height:0;box-sizing:border-box;">Apply</button>';
+      html+='<div style="width:23%;flex-shrink:0;">';
+      html+='<input id="cvLinkDate" value="'+esc(curDate)+'" readonly style="width:100%;padding:.5em .7em;font-family:\'Times New Roman\',serif;font-size:clamp(13px,.95vw,17px);border:1px solid #d4c9b0;border-radius:3px;background:#f0ebe0;color:#8a7a5a;cursor:default;text-align:center;box-sizing:border-box;">';
+      html+='</div>';
+      html+='</div>';
+
+      html+='<div id="cvLinkMsg" class="form-modal-msg" style="margin-top:.5em;min-height:1.3em;"></div>';
+
+      // Use /edit for iframe so authenticated users can edit directly
+      var iframeSrc=curUrl?esc(curUrl.replace(/\/(edit|preview).*$/,'/edit')):'';
+      html+='<div id="cvLinkPreviewWrap" style="margin-top:1.2vh;border:1px solid #d4c9b0;border-radius:4px;overflow:hidden;background:#fff;'+(curUrl?'':'display:none;')+'">';
+      html+='<iframe id="cvLinkIframe" src="'+iframeSrc+'" style="width:100%;height:55vh;border:none;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>';
+      html+='</div>';
+
+      contentArea.innerHTML=html;
+
+      // Sync Apply button & date input height to URL input
+      requestAnimationFrame(function(){
+        var urlInput=document.getElementById('cvLinkUrl');
+        var h=urlInput.offsetHeight;
+        document.getElementById('cvLinkApplyBtn').style.height=h+'px';
+        document.getElementById('cvLinkDate').style.height=h+'px';
+      });
+
+      document.getElementById('cvLinkApplyBtn').onclick=async function(){
+        const btn=this;
+        const url=document.getElementById('cvLinkUrl').value.trim();
+        const msg=document.getElementById('cvLinkMsg');
+        if(!url){msg.textContent='Please enter a URL.';msg.className='form-modal-msg status-err';return;}
+        btn.disabled=true;btn.textContent='Saving...';msg.textContent='';
+        try{
+          const now=new Date();
+          const pad=function(n){return n<10?'0'+n:String(n);};
+          const dateStr=now.getFullYear()+'/'+pad(now.getMonth()+1)+'/'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+          const rowData={no_:row.no_||row.no_num||'1',url:url,date:dateStr};
+          if(rows.length>0){
+            await writeSheet(tab.sheet,'update',{index:0,row:rowData});
+          }else{
+            await writeSheet(tab.sheet,'add',{row:rowData});
+          }
+          delete cache[tab.sheet];
+          document.getElementById('cvLinkDate').value=dateStr;
+          // Show iframe in edit mode
+          var editUrl=url.replace(/\/(edit|preview).*$/,'/edit');
+          document.getElementById('cvLinkIframe').src=editUrl;
+          document.getElementById('cvLinkPreviewWrap').style.display='';
+          msg.textContent='Saved.';msg.className='form-modal-msg status-ok';
+          btn.textContent='Applied!';
+          setTimeout(()=>{btn.textContent='Apply';btn.disabled=false;msg.textContent='';},1200);
+        }catch(e){
+          console.error(e);
+          msg.textContent='Save failed.';msg.className='form-modal-msg status-err';
+          btn.textContent='Apply';btn.disabled=false;
+        }
+      };
+    }catch(e){console.error(e);contentArea.innerHTML='<p class="loading-text" style="color:#c66;">Load failed.</p>';}
+    if(showOverlay)hideInlineLoading();
+    return;
+  }
+
   try{
     const rows=await fetchSheet(tab.sheet);
     currentData=rows.map((r,i)=>{const c=JSON.parse(JSON.stringify(r));c._oi=i;return c;});
