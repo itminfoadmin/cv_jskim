@@ -90,6 +90,13 @@ body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:ce
 .toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
 .toggle-track.on .toggle-knob{transform:translateX(16px);}
 .loading-text{font-style:italic;color:#999;font-size:clamp(14px,1.1vw,18px);padding:3vh 0;}
+/* ── Inline loading overlay (save/reload) ── */
+.inline-loading-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(245,242,237,.75);z-index:150;justify-content:center;align-items:center;flex-direction:column;}
+.inline-loading-overlay.active{display:flex;}
+.inline-loading-spinner{width:32px;height:32px;border:3px solid #e8dcc8;border-top:3px solid #c4a265;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:1.2em;}
+.inline-loading-bar-wrap{width:160px;height:4px;background:#e8dcc8;border-radius:2px;overflow:hidden;}
+.inline-loading-bar-fill{width:0%;height:100%;background:linear-gradient(90deg,#c4a265,#8a7a5a);border-radius:2px;transition:width .4s;}
+.inline-loading-label{margin-top:.8em;font-family:Georgia,serif;font-size:13px;color:#b0a08a;font-style:italic;letter-spacing:.08em;}
 /* ── Modals ── */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.55);z-index:100;justify-content:center;align-items:center;}
 .modal-overlay.open{display:flex;}
@@ -123,6 +130,7 @@ body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:ce
 .mgr-close{position:absolute;top:.8em;right:1em;font-size:16px;color:#8a7a5a;background:none;border:none;cursor:pointer;}
 .mgr-close:hover{color:#e8d5a8;}
 </style></head><body>
+<div class="inline-loading-overlay" id="inlineLoading"><div class="inline-loading-spinner"></div><div class="inline-loading-bar-wrap"><div class="inline-loading-bar-fill" id="inlineLoadingBar"></div></div><div class="inline-loading-label" id="inlineLoadingLabel">Loading...</div></div>
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-bar-wrap"><div class="loading-bar-fill" id="loadingBar"></div></div><div class="loading-label" id="loadingLabel">Preparing...</div></div>
 <div class="page-wrapper">
   <div class="top-bar"><div></div><div style="display:flex;gap:.6em;align-items:center;"><button class="btn-cv" onclick="window.open('main_c.html','_blank')">CV 확인하기</button><button class="logout-btn" id="logoutBtn">Logout</button></div></div>
@@ -155,6 +163,9 @@ const TABS=[
 const ALL_SHEETS=TABS.map(t=>t.sheet);
 const cache={};const contentArea=document.getElementById('contentArea');
 let currentTab=null,currentData=[],mgrData=[],sortDirty=false;
+
+function showInlineLoading(msg){const el=document.getElementById('inlineLoading');document.getElementById('inlineLoadingLabel').textContent=msg||'Loading...';document.getElementById('inlineLoadingBar').style.width='0%';el.classList.add('active');let w=0;el._iv=setInterval(()=>{w=Math.min(w+Math.random()*15+5,90);document.getElementById('inlineLoadingBar').style.width=w+'%';},300);}
+function hideInlineLoading(){const el=document.getElementById('inlineLoading');if(el._iv)clearInterval(el._iv);document.getElementById('inlineLoadingBar').style.width='100%';setTimeout(()=>{el.classList.remove('active');},350);}
 
 async function preloadAll(){const bar=document.getElementById('loadingBar'),label=document.getElementById('loadingLabel');const total=ALL_SHEETS.length;let loaded=0;await Promise.all(ALL_SHEETS.map(async s=>{try{const r=await fetch(GAS_URL+'?sheets='+encodeURIComponent(s));const j=await r.json();cache[s]=j[s]||[];}catch(e){cache[s]=[];}loaded++;bar.style.width=Math.round(loaded/total*100)+'%';label.textContent='Loading '+loaded+'/'+total;}));mgrData=cache['14_manager_infor']||[];label.textContent='Complete';bar.style.width='100%';setTimeout(()=>{document.getElementById('loadingOverlay').classList.add('hidden');},350);}
 async function fetchSheet(s){if(cache[s])return cache[s];const r=await fetch(GAS_URL+'?sheets='+encodeURIComponent(s));const j=await r.json();cache[s]=j[s]||[];return cache[s];}
@@ -289,11 +300,12 @@ function renderCards(tab,rows){
   contentArea.innerHTML=html;
 }
 
-async function loadTab(tab){
+async function loadTab(tab,showOverlay){
   currentTab=tab;sortDirty=false;
   document.getElementById('contentHeader').innerHTML='';
   contentArea.innerHTML='<p class="loading-text">Loading...</p>';
   contentArea.scrollTop=0;
+  if(showOverlay)showInlineLoading('Loading data...');
   try{
     const rows=await fetchSheet(tab.sheet);
     currentData=rows.map((r,i)=>{const c=JSON.parse(JSON.stringify(r));c._oi=i;return c;});
@@ -310,6 +322,7 @@ async function loadTab(tab){
     }
     renderCards(tab,currentData);
   }catch(e){console.error(e);contentArea.innerHTML='<p class="loading-text" style="color:#c66;">Load failed.</p>';}
+  if(showOverlay)hideInlineLoading();
 }
 
 /* ── Open / Close ── */
@@ -376,21 +389,21 @@ window.saveEdit=async function(idx){
   if(row.no_!==undefined)rowData.no_=row.no_;
   if(row.no_num!==undefined)rowData.no_num=row.no_num;
   rowData.dsp=card.querySelector('.toggle-track').classList.contains('on')?'1':'0';
-  saveBtn.disabled=true;saveBtn.textContent='Saving...';
+  saveBtn.disabled=true;saveBtn.textContent='Saving...';showInlineLoading('Saving...');
   try{
     await writeSheet(currentTab.sheet,'update',{index:row._oi,row:rowData});
     Object.keys(rowData).forEach(k=>{currentData[idx][k]=rowData[k];});
     const sorted=[...currentData].sort((a,b)=>a._oi-b._oi);
     cache[currentTab.sheet]=sorted.map(r=>{const c=JSON.parse(JSON.stringify(r));delete c._oi;return c;});
     saveBtn.textContent='Saved!';
-    setTimeout(()=>{rerenderCardOpen(idx);},600);
-  }catch(e){console.error(e);saveBtn.textContent='Failed!';saveBtn.disabled=false;alert('Save failed: '+e.message);}
+    setTimeout(()=>{rerenderCardOpen(idx);hideInlineLoading();},600);
+  }catch(e){console.error(e);saveBtn.textContent='Failed!';saveBtn.disabled=false;hideInlineLoading();alert('Save failed: '+e.message);}
 };
 
 window.cancelEdit=function(idx){
   rerenderCardOpen(idx);
 };
-window.deleteRow=async function(idx){if(!confirm('Delete this item?'))return;try{await writeSheet(currentTab.sheet,'delete',{index:currentData[idx]._oi});delete cache[currentTab.sheet];await loadTab(currentTab);}catch(e){console.error(e);alert('Delete failed: '+e.message);}};
+window.deleteRow=async function(idx){if(!confirm('Delete this item?'))return;showInlineLoading('Deleting...');try{await writeSheet(currentTab.sheet,'delete',{index:currentData[idx]._oi});delete cache[currentTab.sheet];await loadTab(currentTab,true);}catch(e){console.error(e);hideInlineLoading();alert('Delete failed: '+e.message);}};
 
 /* ── Move (visual only) ── */
 window.moveRow=function(idx,dir){const target=idx+dir;if(target<0||target>=currentData.length)return;const k=currentData[0].no_!==undefined?'no_':'no_num';const tmp=currentData[idx][k];currentData[idx][k]=currentData[target][k];currentData[target][k]=tmp;if(currentTab.sortAsc)currentData.sort((a,b)=>(Number(a[k]||0))-(Number(b[k]||0)));else currentData.sort((a,b)=>(Number(b[k]||0))-(Number(a[k]||0)));sortDirty=true;renderCards(currentTab,currentData);};
@@ -401,7 +414,7 @@ const addModal=document.getElementById('addModal');
 document.getElementById('addModalCancel').onclick=()=>addModal.classList.remove('open');
 addModal.onclick=e=>{if(e.target===addModal)addModal.classList.remove('open');};
 window.openAddModal=function(){if(!currentData.length){alert('No column info.');return;}const cols=Object.keys(currentData[0]);const container=document.getElementById('addFields');let html='';cols.forEach(c=>{if(c==='no_num'||c==='no_'||c==='dsp'||c==='_oi')return;const isLong=c==='content'||c==='thesis'||c.indexOf('description')>=0||c.indexOf('role')>=0;html+='<div class="edit-row"><label>'+esc(getLabel(c))+'</label>';if(isLong)html+='<textarea data-col="'+esc(c)+'"></textarea>';else html+='<input data-col="'+esc(c)+'" value="">';html+='</div>';});container.innerHTML=html;document.getElementById('addModalMsg').textContent='';addModal.classList.add('open');};
-document.getElementById('addModalSave').onclick=async function(){const fields=document.getElementById('addFields').querySelectorAll('[data-col]');const rowData={};fields.forEach(f=>{rowData[f.dataset.col]=f.value;});const k=currentData[0].no_!==undefined?'no_':'no_num';const maxNo=currentData.reduce((mx,r)=>Math.max(mx,Number(r[k]||0)),0);rowData[k]=String(maxNo+1);rowData.dsp='1';const msg=document.getElementById('addModalMsg');const btn=this;btn.disabled=true;btn.textContent='Saving...';try{await writeSheet(currentTab.sheet,'add',{row:rowData});msg.textContent='Added.';msg.className='form-modal-msg status-ok';delete cache[currentTab.sheet];setTimeout(async()=>{addModal.classList.remove('open');await loadTab(currentTab);},400);}catch(e){msg.textContent='Failed.';msg.className='form-modal-msg status-err';}finally{btn.disabled=false;btn.textContent='Save';}};
+document.getElementById('addModalSave').onclick=async function(){const fields=document.getElementById('addFields').querySelectorAll('[data-col]');const rowData={};fields.forEach(f=>{rowData[f.dataset.col]=f.value;});const k=currentData[0].no_!==undefined?'no_':'no_num';const maxNo=currentData.reduce((mx,r)=>Math.max(mx,Number(r[k]||0)),0);rowData[k]=String(maxNo+1);rowData.dsp='1';const msg=document.getElementById('addModalMsg');const btn=this;btn.disabled=true;btn.textContent='Saving...';try{await writeSheet(currentTab.sheet,'add',{row:rowData});msg.textContent='Added.';msg.className='form-modal-msg status-ok';delete cache[currentTab.sheet];setTimeout(async()=>{addModal.classList.remove('open');await loadTab(currentTab,true);},400);}catch(e){msg.textContent='Failed.';msg.className='form-modal-msg status-err';}finally{btn.disabled=false;btn.textContent='Save';}};
 
 buildTabs();preloadAll().then(()=>{document.querySelector('.mng-tab').click();});
 

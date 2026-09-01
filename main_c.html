@@ -30,11 +30,11 @@
     /* Name overlay */
     .name-overlay {
       position: absolute;
-      top: 42%;
-      left: 53.5%;
+      top: 43.5%;
+      left: 51%;
       transform: translateX(-50%);
       color: #d4b87a;
-      font-size: clamp(28px, 4.5vw, 72px);
+      font-size: clamp(16px, min(4.5vw, 8vh), 72px);
       font-family: "Georgia", "Times New Roman", serif;
       font-style: italic;
       letter-spacing: 0.06em;
@@ -49,7 +49,7 @@
       left: 53.5%;
       transform: translateX(calc(-50% + 0.15em / 2));
       color: #c4a265;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2vh), 19px);
       font-family: "Georgia", "Times New Roman", serif;
       font-style: italic;
       letter-spacing: 0.15em;
@@ -72,7 +72,7 @@
       transform: translateX(calc(-50% + 0.15em / 2));
       z-index: 3;
       text-align: center;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.4s ease;
     }
     .cover-status.hidden {
       opacity: 0;
@@ -80,7 +80,7 @@
     }
     .cover-status-text {
       font-family: "Georgia", "Times New Roman", serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       color: #D4A94C;
       letter-spacing: 0.2em;
       font-style: italic;
@@ -103,6 +103,81 @@
     .cover-status .retry-btn:hover {
       background: #C4A26522;
       border-color: #C4A265;
+    }
+
+    /* ── Cover Flip Animation ── */
+    .cover-wrapper {
+      perspective: 2500px;
+      --spine-x: 4.3%;  /* 빨간선(책등) 위치 */
+    }
+    .cover-flip-page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      transform-origin: var(--spine-x) center;
+      transform: rotateY(0deg);
+      backface-visibility: hidden;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .cover-flip-page img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: right center;
+    }
+    .cover-flip-page .flip-name,
+    .cover-flip-page .flip-email,
+    .cover-flip-page .flip-status {
+      position: absolute;
+      pointer-events: none;
+    }
+    /* 책등 왼쪽 흰색 마스크 — 넘기는 동안 innerpage 배경 가림 */
+    .cover-spine-mask {
+      position: absolute;
+      top: 0;
+      right: calc(100% - var(--spine-x));
+      left: -100vw;
+      height: 100%;
+      z-index: 8;
+      background: #fff;
+      pointer-events: none;
+    }
+    /* shadow that appears on the page underneath as cover lifts */
+    .cover-flip-shadow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9;
+      background: linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 35%);
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity;
+    }
+    /* reverse: cover comes back from the left */
+    @keyframes coverFlipOpen {
+      0%   { transform: rotateY(0deg); }
+      100% { transform: rotateY(-165deg); }
+    }
+    @keyframes coverFlipClose {
+      0%   { transform: rotateY(-165deg); }
+      100% { transform: rotateY(0deg); }
+    }
+    @keyframes flipShadowIn {
+      0%   { opacity: 0; }
+      40%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes flipShadowOut {
+      0%   { opacity: 0; }
+      50%  { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     /* Tab reveal animation */
@@ -148,7 +223,7 @@
     .content-overlay::-webkit-scrollbar { display: none; }
     .content-overlay .section-title {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(19px, 1.8vw, 30px);
+      font-size: clamp(12px, min(1.8vw, 3.2vh), 30px);
       font-weight: bold;
       color: #3C2415;
       margin-top: 4vh;
@@ -171,14 +246,14 @@
     }
     .content-overlay .content-item {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       color: #5A4632;
       line-height: 1.7;
       margin-bottom: 0.6vh;
     }
     .content-overlay .loading {
       font-family: "Georgia", "Times New Roman", serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #999;
       font-style: italic;
       line-height: 1.8;
@@ -198,7 +273,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       color: #3C2415;
       margin-bottom: 0.3vh;
     }
@@ -212,7 +287,7 @@
     }
     .edu-detail {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       line-height: 1.6;
       padding-left: 2.5vw;
@@ -239,7 +314,7 @@
     .edu-detail .ext-icon {
       display: inline-block;
       margin-left: 0.4em;
-      font-size: clamp(13px, 1.1vw, 18px);
+      font-size: clamp(9px, min(1.1vw, 1.95vh), 18px);
       vertical-align: middle;
       opacity: 0.8;
     }
@@ -250,7 +325,7 @@
     /* Bullet list items (Research Interests) */
     .content-bullet {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       color: #3C2415;
       line-height: 1.7;
       margin-bottom: 4vh;
@@ -265,7 +340,7 @@
     /* Hanging indent items (Presentations) */
     .content-hanging {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.25vw, 2.2vh), 21px);
       color: #3C2415;
       line-height: 1.8;
       margin-bottom: 3.5vh;
@@ -292,7 +367,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       color: #3C2415;
       margin-bottom: 0.3vh;
       gap: 1.5vw;
@@ -308,7 +383,7 @@
     }
     .disc-desc {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       line-height: 1.7;
       padding-left: 2.5vw;
@@ -326,14 +401,14 @@
     }
     .prof-org {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       font-weight: bold;
       color: #3C2415;
       line-height: 1.6;
     }
     .prof-detail {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       line-height: 1.7;
       padding-left: 2.5vw;
@@ -356,7 +431,7 @@
     }
     .prof-period-only {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       text-align: right;
       margin-top: 0.3vh;
@@ -373,7 +448,7 @@
     }
     .award-title {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       font-weight: bold;
       color: #3C2415;
       line-height: 1.6;
@@ -383,7 +458,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       line-height: 1.7;
       padding-left: 2.5vw;
@@ -406,7 +481,7 @@
     }
     .cert-name {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       font-weight: bold;
       color: #3C2415;
       line-height: 1.6;
@@ -416,7 +491,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       line-height: 1.7;
       padding-left: 2.5vw;
@@ -445,7 +520,7 @@
       justify-content: space-between;
       align-items: baseline;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(15px, 1.33vw, 22px);
+      font-size: clamp(10px, min(1.33vw, 2.4vh), 22px);
       color: #3C2415;
       gap: 1.5vw;
     }
@@ -458,7 +533,7 @@
     }
     .teach-role {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       font-style: italic;
       font-weight: bold;
       color: #3C2415;
@@ -470,7 +545,7 @@
       justify-content: flex-start;
       align-items: baseline;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       padding-left: 3vw;
       margin-top: 1.5vh;
@@ -501,7 +576,7 @@
     }
     .pub-text {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(10px, min(1.25vw, 2.2vh), 21px);
       color: #3C2415;
       line-height: 1.8;
       padding-left: 2.5vw;
@@ -522,7 +597,7 @@
     }
     .pub-abstract a {
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.1vw, 18px);
+      font-size: clamp(9px, min(1.1vw, 1.95vh), 18px);
       color: #3C2415;
       text-decoration: none;
       font-weight: bold;
@@ -532,10 +607,41 @@
       color: #D4A94C;
     }
     .pub-abstract .ext-icon {
-      font-size: clamp(13px, 1.1vw, 18px);
+      font-size: clamp(9px, min(1.1vw, 1.95vh), 18px);
       vertical-align: middle;
       margin-left: 0.3em;
       opacity: 0.8;
+    }
+
+    /* CV Download Button */
+    .cv-download-btn {
+      display: inline-block;
+      padding: 0.8em 3em;
+      font-family: Georgia, serif;
+      font-size: clamp(9px, min(1.1vw, 1.95vh), 18px);
+      font-style: italic;
+      color: #3C2415;
+      background: linear-gradient(180deg, rgba(220,200,160,0.35) 0%, rgba(196,162,101,0.18) 50%, rgba(170,140,90,0.25) 100%);
+      border: 2px solid #C4A265;
+      border-radius: 6px;
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .cv-download-btn:hover {
+      color: #2a1a0a;
+      background: linear-gradient(180deg, rgba(220,200,160,0.55) 0%, rgba(196,162,101,0.35) 50%, rgba(170,140,90,0.4) 100%);
+      border-color: #b8923e;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 3px 6px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.4);
+      transform: translateY(-2px);
+    }
+    .cv-download-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15), inset 0 2px 4px rgba(0,0,0,0.08);
+      background: linear-gradient(180deg, rgba(170,140,90,0.3) 0%, rgba(196,162,101,0.25) 50%, rgba(220,200,160,0.35) 100%);
     }
 
     /* Pagination */
@@ -550,7 +656,7 @@
       gap: 1.5vw;
       z-index: 4;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       user-select: none;
     }
@@ -558,7 +664,7 @@
       background: none;
       border: none;
       font-family: "Times New Roman", Times, serif;
-      font-size: clamp(13px, 1.15vw, 19px);
+      font-size: clamp(9px, min(1.15vw, 2.05vh), 19px);
       color: #5A4632;
       cursor: pointer;
       padding: 0.2em 0.6em;
@@ -1060,6 +1166,21 @@
       });
     }
 
+    /* ── Wait for cover image to load first, then start data loading ── */
+    function waitForCoverImage() {
+      return new Promise(function(resolve) {
+        if (img.complete && img.naturalWidth > 0) { resolve(); return; }
+        img.addEventListener('load', function onLoad() {
+          img.removeEventListener('load', onLoad);
+          resolve();
+        });
+        img.addEventListener('error', function onErr() {
+          img.removeEventListener('error', onErr);
+          resolve(); // proceed even on error
+        });
+      });
+    }
+
     async function preload() {
       var statusText = document.getElementById('coverStatusText');
       var statusCount = document.getElementById('coverStatusCount');
@@ -1068,19 +1189,25 @@
       statusCount.textContent = '';
 
       try {
+        // Stage 0: Wait for cover image to render
+        await waitForCoverImage();
+        captureCoverNatural();
+        var coverTab = document.querySelector('.index-tab[data-page="cover"]');
+        if (coverTab) coverTab.classList.add('cover-ready');
+
         // Stage 1: Preparing
-        await new Promise(function(r){ setTimeout(r, 300); });
-        
+        await new Promise(function(r){ setTimeout(r, 400); });
+
         // Preparing 완료 → Introduction 탭 즉시 reveal
         var introTab = document.querySelector('.index-tab[data-page="introduction"]');
         if (introTab) {
           introTab.classList.add('revealed');
           setTimeout(function() { introTab.classList.add('settled'); }, 800);
         }
-        
+
         statusText.textContent = 'Loading';
 
-        // Stage 2: Loading (개별 시트 로딩)
+        // Stage 2: Loading (개별 시트 로딩) — 이미지 표시 후에만 시작
         var total = ALL_SHEETS.length;
         var loaded = 0;
         statusCount.textContent = '0 / ' + total;
@@ -1098,11 +1225,25 @@
 
         await Promise.all(promises);
 
-        // Stage 3: Ready
+        // Stage 3: Ensure all tabs are revealed, then show Ready after last one settles
         dataReady = true;
-        statusText.textContent = 'Ready';
-        statusCount.textContent = '';
         revealTabsSequentially();
+
+        // Wait for last tab to settle (revealed + 800ms settle animation)
+        var allTabs = document.querySelectorAll('.index-tab:not([data-page="cover"])');
+        var unrevealed = 0;
+        allTabs.forEach(function(t) { if (!t.classList.contains('revealed')) unrevealed++; });
+        var lastDelay = unrevealed * 150 + 800 + 200; // sequential reveal delays + settle + buffer
+
+        // Also wait for tabs that were already being revealed
+        var maxSettleWait = 1200; // max wait for any settle animation
+        var readyDelay = Math.max(lastDelay, maxSettleWait);
+
+        setTimeout(function() {
+          statusText.textContent = 'Ready';
+          statusCount.textContent = '';
+        }, readyDelay);
+
         console.log('데이터 프리로드 완료');
       } catch (e) {
         statusDiv.innerHTML =
@@ -1182,6 +1323,31 @@
 
           prevBtn.onclick = function() { if (pubPage > 1) renderPublications(pubPage - 1); };
           nextBtn.onclick = function() { if (pubPage < totalPages) renderPublications(pubPage + 1); };
+
+          // ── 항목이 pagination 영역을 침범하면 다음 페이지로 ──
+          requestAnimationFrame(function() {
+            var pagTop = pag.getBoundingClientRect().top;
+            var entries = contentOverlay.querySelectorAll('.pub-entry');
+            var removed = 0;
+            for (var i = entries.length - 1; i >= 0; i--) {
+              if (entries[i].getBoundingClientRect().bottom > pagTop - 6) {
+                entries[i].style.display = 'none';
+                removed++;
+              } else {
+                break;
+              }
+            }
+            if (removed > 0) {
+              pubPerPage = Math.max(1, pubPerPage - removed);
+              var newTotal = Math.ceil(pubData.length / pubPerPage);
+              if (pubPage > newTotal) pubPage = newTotal;
+              pageInfoEl.textContent = pubPage + ' / ' + newTotal;
+              prevBtn.disabled = (pubPage <= 1);
+              nextBtn.disabled = (pubPage >= newTotal);
+              prevBtn.onclick = function() { if (pubPage > 1) renderPublications(pubPage - 1); };
+              nextBtn.onclick = function() { if (pubPage < newTotal) renderPublications(pubPage + 1); };
+            }
+          });
         }
 
       } catch (err) {
@@ -1195,13 +1361,13 @@
     function renderIntroduction() {
       contentOverlay.style.display = 'block';
       var html = '<div class="section-title">INTRODUCTION</div>';
-      html += '<div style="margin-top:8vh;"></div>';
+      html += '<div style="margin-top:14vh;"></div>';
       html += '<div class="content-item" style="line-height:2.2;">';
       html += 'This website serves as Jongsu Kim\'s Curriculum Vitae (CV), covering everything from education to ongoing studies. ';
       html += 'You can view each section by clicking the labels on the right, or download the full CV document by clicking the download button below.';
       html += '</div>';
-      html += '<div style="margin-top:5vh;text-align:center;">';
-      html += '<a href="https://docs.google.com/document/d/1WDvdxvv3CkSPiprN1VkQT8VKdek7tNmkyS3NqRM1I3s/export?format=pdf" download="CV_Jongsu_Kim.pdf" style="display:inline-block;padding:0.7em 2.5em;font-family:Georgia,serif;font-size:clamp(14px,1.1vw,18px);font-style:italic;color:#3C2415;background:rgba(196,162,101,0.15);border:2px solid #C4A265;border-radius:5px;text-decoration:none;letter-spacing:0.1em;box-shadow:0 3px 10px rgba(0,0,0,0.15);transition:all 0.3s;">CV Download</a>';
+      html += '<div style="margin-top:12vh;text-align:center;">';
+      html += '<a href="https://docs.google.com/document/d/1WDvdxvv3CkSPiprN1VkQT8VKdek7tNmkyS3NqRM1I3s/export?format=pdf" download="CV_Jongsu_Kim.pdf" class="cv-download-btn">CV Download</a>';
       html += '</div>';
       contentOverlay.innerHTML = html;
     }
@@ -1784,32 +1950,84 @@
         var coverStatus = document.getElementById('coverStatus');
 
         if (page === 'cover') {
-          /* ── ★ innerpage → cover ── */
-          // innerpage 이미지·레이아웃은 그대로 유지, 콘텐츠만 즉시 제거
+          /* ── ★ innerpage → cover (역방향 페이지 넘김) ── */
           contentOverlay.style.display = 'none';
           contentOverlay.innerHTML = '';
           document.getElementById('pagination').style.display = 'none';
 
-          // 커버 이미지 프리로드 → 완료 후 한꺼번에 교체
+          // 커버 이미지 프리로드
           var coverImg = new Image();
           coverImg.onload = function() {
             if (currentPage !== 'cover') return;
-            // 레이아웃 복원
-            wrapperEl.style.width = '';
-            wrapperEl.style.height = '';
-            img.style.position = '';
-            img.style.right = '';
-            img.style.top = '';
-            img.style.width = '';
-            img.style.height = '';
-            img.style.maxWidth = '';
-            img.style.maxHeight = '';
-            document.body.style.overflowX = '';
-            // 이미지 교체 (이미 로드 완료이므로 즉시 렌더)
-            img.src = coverImg.src;
-            emailOverlay.style.display = '';
-            document.querySelector('.name-overlay').style.display = '';
-            coverStatus.classList.remove('hidden');
+
+            // flip 레이어: 커버 이미지를 담아 왼쪽에서 닫히듯 들어옴
+            var flipPage = document.createElement('div');
+            flipPage.className = 'cover-flip-page';
+            // 시작: 왼쪽으로 펼쳐진 상태
+            flipPage.style.transform = 'rotateY(-165deg)';
+
+            var flipImg = document.createElement('img');
+            flipImg.src = coverImg.src;
+            flipPage.appendChild(flipImg);
+
+            // 이름·이메일·상태 오버레이 (커버 위에 표시)
+            var nameEl = document.querySelector('.name-overlay');
+            var flipName = nameEl.cloneNode(true);
+            flipName.className = 'flip-name';
+            flipName.style.cssText = 'position:absolute;top:43.5%;left:51%;transform:translateX(-50%);color:#d4b87a;font-size:' + window.getComputedStyle(nameEl).fontSize + ';font-family:Georgia,Times New Roman,serif;font-style:italic;letter-spacing:0.06em;white-space:nowrap;z-index:3;pointer-events:none;text-shadow:1px 1px 2px rgba(0,0,0,0.3);';
+            flipPage.appendChild(flipName);
+
+            var flipEmail = emailOverlay.cloneNode(true);
+            flipEmail.className = 'flip-email';
+            flipEmail.style.cssText = 'position:absolute;top:55.5%;left:53.5%;transform:translateX(calc(-50% + 0.15em / 2));color:#c4a265;font-size:' + window.getComputedStyle(emailOverlay).fontSize + ';font-family:Georgia,Times New Roman,serif;font-style:italic;letter-spacing:0.15em;white-space:nowrap;z-index:3;pointer-events:none;';
+            flipPage.appendChild(flipEmail);
+
+            var statusEl = document.getElementById('coverStatus');
+            var flipStatus = statusEl.cloneNode(true);
+            flipStatus.className = 'flip-status';
+            flipStatus.style.cssText = 'position:absolute;top:80%;left:52%;transform:translateX(calc(-50% + 0.15em / 2));z-index:3;text-align:center;pointer-events:none;';
+            flipPage.appendChild(flipStatus);
+
+            var flipShadow = document.createElement('div');
+            flipShadow.className = 'cover-flip-shadow';
+
+            // 책등 왼쪽 흰색 마스크
+            var spineMask = document.createElement('div');
+            spineMask.className = 'cover-spine-mask';
+
+            wrapperEl.appendChild(spineMask);
+            wrapperEl.appendChild(flipShadow);
+            wrapperEl.appendChild(flipPage);
+
+            // 애니메이션 시작
+            var flipDuration = 1000;
+            // force reflow
+            void flipPage.offsetWidth;
+            flipPage.style.animation = 'coverFlipClose ' + flipDuration + 'ms cubic-bezier(0.45, 0.05, 0.35, 0.95) forwards';
+            flipShadow.style.animation = 'flipShadowOut ' + flipDuration + 'ms ease forwards';
+
+            flipPage.addEventListener('animationend', function() {
+              // 레이아웃 복원
+              wrapperEl.style.width = '';
+              wrapperEl.style.height = '';
+              img.style.position = '';
+              img.style.right = '';
+              img.style.top = '';
+              img.style.width = '';
+              img.style.height = '';
+              img.style.maxWidth = '';
+              img.style.maxHeight = '';
+              document.body.style.overflowX = '';
+              // 이미지 교체
+              img.src = coverImg.src;
+              emailOverlay.style.display = '';
+              nameEl.style.display = '';
+              statusEl.classList.remove('hidden');
+              // flip 레이어 제거
+              flipPage.remove();
+              flipShadow.remove();
+              spineMask.remove();
+            }, { once: true });
           };
           coverImg.src = 'img/cv_cover.png?v=' + Date.now();
 
@@ -1821,20 +2039,92 @@
           renderPageContent(page);
 
         } else {
-          /* ── ★ cover → innerpage (배경 프리로드 후 콘텐츠) ── */
-          emailOverlay.style.display = 'none';
-          document.querySelector('.name-overlay').style.display = 'none';
-          coverStatus.classList.add('hidden');
+          /* ── ★ cover → innerpage (3D 페이지 넘김 애니메이션) ── */
           contentOverlay.style.display = 'none';
           contentOverlay.innerHTML = '';
           document.getElementById('pagination').style.display = 'none';
 
+          // 1) 현재 커버를 복제한 flip 레이어 생성
+          var flipPage = document.createElement('div');
+          flipPage.className = 'cover-flip-page';
+
+          // 커버 이미지 복제
+          var flipImg = document.createElement('img');
+          flipImg.src = img.src;
+          flipPage.appendChild(flipImg);
+
+          // 이름 오버레이 복제
+          var nameEl = document.querySelector('.name-overlay');
+          var flipName = nameEl.cloneNode(true);
+          flipName.className = 'flip-name';
+          flipName.style.cssText = window.getComputedStyle(nameEl).cssText;
+          flipName.style.position = 'absolute';
+          flipName.style.zIndex = '3';
+          flipName.style.pointerEvents = 'none';
+          flipPage.appendChild(flipName);
+
+          // 이메일 오버레이 복제
+          var flipEmail = emailOverlay.cloneNode(true);
+          flipEmail.className = 'flip-email';
+          flipEmail.style.cssText = window.getComputedStyle(emailOverlay).cssText;
+          flipEmail.style.position = 'absolute';
+          flipEmail.style.zIndex = '3';
+          flipEmail.style.pointerEvents = 'none';
+          flipPage.appendChild(flipEmail);
+
+          // 상태 텍스트 복제
+          var statusEl = document.getElementById('coverStatus');
+          var flipStatus = statusEl.cloneNode(true);
+          flipStatus.className = 'flip-status';
+          flipStatus.style.cssText = window.getComputedStyle(statusEl).cssText;
+          flipStatus.style.position = 'absolute';
+          flipStatus.style.zIndex = '3';
+          flipStatus.style.pointerEvents = 'none';
+          flipPage.appendChild(flipStatus);
+
+          // 그림자 레이어
+          var flipShadow = document.createElement('div');
+          flipShadow.className = 'cover-flip-shadow';
+
+          // 책등 왼쪽 흰색 마스크
+          var spineMask = document.createElement('div');
+          spineMask.className = 'cover-spine-mask';
+
+          // 2) 원본 커버 요소 숨기기
+          emailOverlay.style.display = 'none';
+          nameEl.style.display = 'none';
+          coverStatus.classList.add('hidden');
+
+          // 3) flip 레이어를 wrapper에 추가
+          wrapperEl.appendChild(spineMask);
+          wrapperEl.appendChild(flipShadow);
+          wrapperEl.appendChild(flipPage);
+
+          // 4) innerpage 이미지 프리로드 → 준비되면 배경 교체 & 애니메이션 시작
           var innerImg = new Image();
           innerImg.onload = function() {
-            if (currentPage !== page) return;
+            if (currentPage !== page) {
+              flipPage.remove();
+              flipShadow.remove();
+              spineMask.remove();
+              return;
+            }
+            // 배경을 innerpage로 교체
             applyInnerpageLayout();
             img.src = innerImg.src;
-            renderPageContent(page);
+
+            // 애니메이션 시작
+            var flipDuration = 1000; // ms
+            flipPage.style.animation = 'coverFlipOpen ' + flipDuration + 'ms cubic-bezier(0.45, 0.05, 0.35, 0.95) forwards';
+            flipShadow.style.animation = 'flipShadowIn ' + flipDuration + 'ms ease forwards';
+
+            // 애니메이션 완료 후 정리 & 콘텐츠 렌더
+            flipPage.addEventListener('animationend', function() {
+              flipPage.remove();
+              flipShadow.remove();
+              spineMask.remove();
+              renderPageContent(page);
+            }, { once: true });
           };
           innerImg.src = 'img/cv_innerpage.png?v=' + Date.now();
         }
