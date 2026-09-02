@@ -320,21 +320,20 @@ async function loadTab(tab,showOverlay){
       hdr+='<div class="toolbar"></div>';
       document.getElementById('contentHeader').innerHTML=hdr;
 
-      let html='<div style="display:flex;align-items:flex-end;gap:.6em;margin-top:1vh;">';
-      html+='<div style="flex:1;min-width:0;"><label style="display:block;font-size:clamp(11px,.78vw,14px);color:#8a7a5a;font-weight:bold;margin-bottom:.25em;">Docs URL</label>';
-      html+='<input id="cvLinkUrl" value="'+esc(curUrl)+'" placeholder="https://docs.google.com/document/d/..." style="width:100%;padding:.5em .7em;font-family:\'Times New Roman\',serif;font-size:clamp(13px,.95vw,17px);border:1px solid #d4c9b0;border-radius:3px;background:#fdfcfa;color:#3C2415;outline:none;box-sizing:border-box;">';
-      html+='</div>';
+      let html='<div style="display:flex;align-items:center;gap:.6em;margin-top:1vh;">';
+      html+='<span style="font-family:Georgia,serif;font-size:clamp(11px,.82vw,15px);font-weight:bold;color:#8a7a5a;white-space:nowrap;flex-shrink:0;">Docs URL</span>';
+      html+='<input id="cvLinkUrl" value="'+esc(curUrl)+'" placeholder="https://docs.google.com/document/d/..." style="flex:1;min-width:0;padding:.4em .6em;font-family:\'Times New Roman\',serif;font-size:clamp(12px,.85vw,15px);border:1px solid #d4c9b0;border-radius:3px;background:#fdfcfa;color:#3C2415;outline:none;box-sizing:border-box;">';
       html+='<button class="btn btn-save" id="cvLinkApplyBtn" style="padding:0 1.4em;white-space:nowrap;height:0;box-sizing:border-box;">Apply</button>';
       html+='<div style="width:23%;flex-shrink:0;">';
-      html+='<input id="cvLinkDate" value="'+esc(curDate)+'" readonly style="width:100%;padding:.5em .7em;font-family:\'Times New Roman\',serif;font-size:clamp(13px,.95vw,17px);border:1px solid #d4c9b0;border-radius:3px;background:#f0ebe0;color:#8a7a5a;cursor:default;text-align:center;box-sizing:border-box;">';
+      html+='<input id="cvLinkDate" value="'+esc(curDate)+'" readonly style="width:100%;padding:.4em .6em;font-family:\'Times New Roman\',serif;font-size:clamp(12px,.85vw,15px);border:1px solid #d4c9b0;border-radius:3px;background:#f0ebe0;color:#8a7a5a;cursor:default;text-align:center;box-sizing:border-box;">';
       html+='</div>';
       html+='</div>';
 
-      html+='<div id="cvLinkMsg" class="form-modal-msg" style="margin-top:.5em;min-height:1.3em;"></div>';
+      html+='<div id="cvLinkMsg" class="form-modal-msg" style="margin-top:.3em;min-height:1.1em;"></div>';
 
       // Use /edit for iframe so authenticated users can edit directly
       var iframeSrc=curUrl?esc(curUrl.replace(/\/(edit|preview).*$/,'/edit')):'';
-      html+='<div id="cvLinkPreviewWrap" style="margin-top:1.2vh;border:1px solid #d4c9b0;border-radius:4px;overflow:hidden;background:#fff;'+(curUrl?'':'display:none;')+'">';
+      html+='<div id="cvLinkPreviewWrap" style="margin-top:.4vh;border:1px solid #d4c9b0;border-radius:4px;overflow:hidden;background:#fff;'+(curUrl?'':'display:none;')+'">';
       html+='<iframe id="cvLinkIframe" src="'+iframeSrc+'" style="width:100%;height:55vh;border:none;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>';
       html+='</div>';
 
@@ -345,7 +344,6 @@ async function loadTab(tab,showOverlay){
         var urlInput=document.getElementById('cvLinkUrl');
         var h=urlInput.offsetHeight;
         document.getElementById('cvLinkApplyBtn').style.height=h+'px';
-        document.getElementById('cvLinkDate').style.height=h+'px';
       });
 
       document.getElementById('cvLinkApplyBtn').onclick=async function(){
