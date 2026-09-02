@@ -53,6 +53,11 @@
       max-height: 90vh;
       position: relative;
       z-index: 2;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    img.visible {
+      opacity: 1;
     }
 
     .name-overlay {
@@ -69,6 +74,15 @@
       z-index: 3;
       pointer-events: none;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      opacity: 0;
+    }
+    .name-overlay.visible {
+      opacity: 1;
+      animation: typewriteReveal 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    }
+    .name-overlay.visible.no-animate {
+      animation: none;
+      clip-path: none;
     }
     .email-overlay {
       position: absolute;
@@ -85,6 +99,19 @@
       cursor: text;
       user-select: text;
       z-index: 3;
+      opacity: 0;
+    }
+    .email-overlay.visible {
+      opacity: 1;
+      animation: typewriteReveal 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    }
+    .email-overlay.visible.no-animate {
+      animation: none;
+      clip-path: none;
+    }
+    @keyframes typewriteReveal {
+      0%   { clip-path: inset(0 100% 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
     }
     .email-overlay::selection {
       background: rgba(100, 150, 255, 0.4);
@@ -98,7 +125,11 @@
       transform: translateX(calc(-50% + 0.15em / 2));
       z-index: 3;
       text-align: center;
-      transition: opacity 0.4s ease;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .cover-status.visible {
+      opacity: 1;
     }
     .cover-status.hidden {
       opacity: 0;
@@ -114,15 +145,15 @@
     }
     .cover-status .retry-btn {
       display: inline-block;
-      margin-top: 1vh;
+      margin-top: 1.5vh;
       font-family: "Georgia", "Times New Roman", serif;
-      font-size: clamp(11px, 0.85vw, 14px);
+      font-size: clamp(13px, min(1.2vw, 2.1vh), 20px);
       letter-spacing: 0.15em;
       color: #C4A265;
       background: transparent;
       border: 1px solid #C4A26566;
-      border-radius: 3px;
-      padding: 0.3em 1.2em;
+      border-radius: 4px;
+      padding: 0.5em 2em;
       cursor: pointer;
       transition: background 0.3s, border-color 0.3s;
     }
@@ -151,10 +182,12 @@
     }
     .index-tab[data-page="cover"] {
       opacity: 0;
+      visibility: hidden;
       transform: translateX(0);
     }
     .index-tab[data-page="cover"].cover-ready {
       opacity: 1;
+      visibility: visible;
     }
 
     .content-overlay {
@@ -871,7 +904,7 @@
       flex-direction: column;
       justify-content: center;
       gap: 0.3vh;
-      z-index: 1;
+      z-index: auto;
     }
     .index-tab {
       position: relative;
@@ -880,8 +913,8 @@
       justify-content: flex-end;
       text-align: right;
       height: calc(100% / 15.5);
-      padding: 0.1em 3.3vw 0.1em 2.5vw;
-      margin-left: -1vw;
+      padding: 0.1em 3.3vw 0.1em 4.5vw;
+      margin-left: -3vw;
       background: linear-gradient(135deg, #2a2318 0%, #3d3225 50%, #2a2318 100%);
       border: 1px solid #6b5a3e;
       border-left: none;
@@ -891,20 +924,25 @@
       font-style: italic;
       font-size: clamp(11px, 0.85vw, 14px);
       white-space: normal;
-      max-width: 12.1vw;
+      max-width: 14vw;
       line-height: 1.3;
       cursor: pointer;
       transition: transform 0.4s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
       box-shadow: 2px 1px 4px 0px rgba(0,0,0,0.3);
       user-select: none;
+      z-index: 1;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,1) 17%);
+      mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,1) 17%);
     }
     .index-tab:hover,
     .index-tab.active {
       transform: translateX(calc(9vw - 60px));
-      z-index: 5;
       background: linear-gradient(135deg, #4a3c28 0%, #6b5a3e 50%, #4a3c28 100%);
       color: #e8d5a8;
       border-color: #c4a265;
+    }
+    .index-tab.active {
+      z-index: 3;
     }
     .index-tab:active {
       background: linear-gradient(135deg, #5a4d38 0%, #7a6845 50%, #5a4d38 100%);
@@ -925,6 +963,7 @@
     .index-tab.active .tab-abbr { opacity: 0.9; }
 
     .index-tab.index-tab-map {
+      justify-content: flex-start;
       background: linear-gradient(135deg, #2a2e1e 0%, #3d4a2a 50%, #2a2e1e 100%);
       border-color: #6b7a4a;
     }
@@ -940,7 +979,7 @@
     }
     .tab-abbr-map {
       color: #b0c488 !important;
-      font-size: clamp(11px, 0.9vw, 15px) !important;
+      font-size: clamp(13px, 1.15vw, 19px) !important;
       letter-spacing: 0.03em;
       min-width: 2.2em;
       text-align: center;
@@ -1055,7 +1094,7 @@
       <div class="index-tab" data-page="certification">Certification<span class="tab-abbr">CT</span></div>
       <div class="index-tab" data-page="awards">Awards and Scholarships<span class="tab-abbr">AS</span></div>
       <div class="index-tab" data-page="ongoing-research">Ongoing Research<span class="tab-abbr">OR</span></div>
-      <div class="index-tab index-tab-map" data-page="sitemap">Site MAP<span class="tab-abbr tab-abbr-map">MAP</span></div>
+      <div class="index-tab index-tab-map" data-page="sitemap">Site<span class="tab-abbr tab-abbr-map">MAP</span></div>
     </div>
   </div>
 
@@ -1169,14 +1208,10 @@
     img.addEventListener('load', function() {
       if (img.src.indexOf('cv_cover.png') !== -1) {
         captureCoverNatural();
-        var coverTab = document.querySelector('.index-tab[data-page="cover"]');
-        if (coverTab) coverTab.classList.add('cover-ready');
       }
     });
     if (img.complete && img.naturalWidth > 0) {
       captureCoverNatural();
-      var coverTab = document.querySelector('.index-tab[data-page="cover"]');
-      if (coverTab) coverTab.classList.add('cover-ready');
     }
 
     window.addEventListener('resize', function() {
@@ -1250,7 +1285,7 @@
 
     function revealTabsSequentially() {
       var tabs = ['introduction','education','research-interests','publications','presentations',
-        'discussion','teaching','professional','certification','awards','ongoing-research','sitemap'];
+        'discussion','teaching','professional','certification','awards','ongoing-research'];
       tabs.forEach(function(page, i) {
         var tab = document.querySelector('.index-tab[data-page="' + page + '"]');
         if (tab && !tab.classList.contains('revealed')) {
@@ -1280,46 +1315,86 @@
       var statusText = document.getElementById('coverStatusText');
       var statusCount = document.getElementById('coverStatusCount');
       var statusDiv = document.getElementById('coverStatus');
-      statusText.textContent = 'Preparing';
-      statusCount.textContent = '';
+      var nameOverlay = document.querySelector('.name-overlay');
+      var coverTab = document.querySelector('.index-tab[data-page="cover"]');
 
       try {
+        // 1) 커버 이미지가 완전히 로드될 때까지 대기
         await waitForCoverImage();
         captureCoverNatural();
-        var coverTab = document.querySelector('.index-tab[data-page="cover"]');
+
+        // 2) 커버 이미지를 화면에 페이드인
+        img.classList.add('visible');
+        await new Promise(function(r){ setTimeout(r, 450); });
+
+        // 3) 이미지가 화면에 완전히 보인 후, 이름을 타이핑 효과로 표시하면서 동시에 데이터 로딩 시작
+        nameOverlay.classList.add('visible');
         if (coverTab) coverTab.classList.add('cover-ready');
-        await new Promise(function(r){ setTimeout(r, 400); });
-        var introTab = document.querySelector('.index-tab[data-page="introduction"]');
-        if (introTab) {
-          introTab.classList.add('revealed');
-          setTimeout(function() { introTab.classList.add('settled'); }, 800);
+
+        // Cover 직후 MAP 탭 표시
+        var mapTab = document.querySelector('.index-tab[data-page="sitemap"]');
+        if (mapTab && !mapTab.classList.contains('revealed')) {
+          setTimeout(function() {
+            mapTab.classList.add('revealed');
+            setTimeout(function() { mapTab.classList.add('settled'); }, 800);
+          }, 150);
         }
 
-        statusText.textContent = 'Loading';
-        var total = ALL_SHEETS.length;
-        var loaded = 0;
-        statusCount.textContent = '0 / ' + total;
+        // 이너페이지 이미지를 백그라운드에서 미리 다운로드
+        var innerPreload = new Image();
+        innerPreload.src = 'img/cv_innerpage.png';
 
-        var promises = ALL_SHEETS.map(function(sheetName) {
-          return fetch(GAS_URL + '?sheets=' + encodeURIComponent(sheetName))
+        // 이름 애니메이션(1.2s) 중간쯤에 이메일 시작
+        setTimeout(function() { emailOverlay.classList.add('visible'); }, 800);
+
+        // 데이터 프리로드를 타이핑과 동시에 시작 (5개 배치 병렬 요청)
+        statusText.textContent = 'Loading';
+        statusCount.textContent = '';
+        statusDiv.classList.add('visible');
+
+        // Introduction 탭은 약간 딜레이 후 표시
+        setTimeout(function() {
+          var introTab = document.querySelector('.index-tab[data-page="introduction"]');
+          if (introTab) {
+            introTab.classList.add('revealed');
+            setTimeout(function() { introTab.classList.add('settled'); }, 800);
+          }
+        }, 400);
+
+        // 5개 소규모 배치로 분산 → GAS 인스턴스가 병렬 처리
+        var batches = [
+          ['01_ongoing_research', '02_ongoing_study', '15_cv_link'],
+          ['03_education', '04_reaserch_interest'],
+          ['05_publications', '06_presentations'],
+          ['07_discussion_participant', '08_teaching_experience-1'],
+          ['09_teaching_experience-2', '10_certicication', '11_profession_experience', '12_awards_and_scholarships']
+        ];
+        var totalBatches = batches.length;
+        var loadedBatches = 0;
+        statusCount.textContent = '0 / ' + totalBatches;
+
+        var batchPromises = batches.map(function(batch) {
+          var url = GAS_URL + '?sheets=' + encodeURIComponent(batch.join(','));
+          return fetch(url)
             .then(function(res) { return res.json(); })
             .then(function(json) {
               for (var key in json) { cache[key] = json[key]; }
-              loaded++;
-              statusCount.textContent = loaded + ' / ' + total;
-              revealTab(sheetName);
+              loadedBatches++;
+              statusCount.textContent = loadedBatches + ' / ' + totalBatches;
+              batch.forEach(function(sheetName) { revealTab(sheetName); });
             });
         });
 
-        await Promise.all(promises);
+        await Promise.all(batchPromises);
+
         dataReady = true;
         revealTabsSequentially();
-        var allTabs = document.querySelectorAll('.index-tab:not([data-page="cover"])');
+
+        // 모든 탭 애니메이션이 끝난 후 Ready 표시
+        var allTabs = document.querySelectorAll('.index-tab:not([data-page="cover"]):not([data-page="sitemap"])');
         var unrevealed = 0;
         allTabs.forEach(function(t) { if (!t.classList.contains('revealed')) unrevealed++; });
-        var lastDelay = unrevealed * 150 + 800 + 200;
-        var maxSettleWait = 1200;
-        var readyDelay = Math.max(lastDelay, maxSettleWait);
+        var readyDelay = Math.max(unrevealed * 150 + 1000, 1200);
 
         setTimeout(function() {
           statusText.textContent = 'Ready';
@@ -1328,6 +1403,7 @@
 
         console.log('데이터 프리로드 완료');
       } catch (e) {
+        statusDiv.classList.add('visible');
         statusDiv.innerHTML =
           '<div class="cover-status-text">Loading failed</div>' +
           '<button class="retry-btn" id="retryBtn">RETRY</button>';
@@ -2121,14 +2197,21 @@
             img.style.maxHeight = '';
             document.body.style.overflowX = '';
             emailOverlay.style.display = '';
+            emailOverlay.classList.add('visible', 'no-animate');
             document.querySelector('.name-overlay').style.display = '';
+            document.querySelector('.name-overlay').classList.add('visible', 'no-animate');
             coverStatus.classList.remove('hidden');
+            coverStatus.classList.add('visible');
             function switchToCover() {
               if (currentPage !== 'cover') return;
               img.src = coverImg.src;
+              img.classList.add('visible');
               emailOverlay.style.display = '';
+              emailOverlay.classList.add('visible', 'no-animate');
               document.querySelector('.name-overlay').style.display = '';
+              document.querySelector('.name-overlay').classList.add('visible', 'no-animate');
               coverStatus.classList.remove('hidden');
+              coverStatus.classList.add('visible');
             }
 
             if (coverImg.complete) {
@@ -2161,8 +2244,11 @@
           fadeEl.style.opacity = '0';
           fadeEl.dataset.pendingReveal = 'true';
           emailOverlay.style.display = 'none';
+          emailOverlay.classList.remove('visible');
           document.querySelector('.name-overlay').style.display = 'none';
+          document.querySelector('.name-overlay').classList.remove('visible');
           coverStatus.classList.add('hidden');
+          coverStatus.classList.remove('visible');
           contentOverlay.style.display = 'none';
           contentOverlay.innerHTML = '';
           document.getElementById('pagination').style.display = 'none';
@@ -2172,6 +2258,7 @@
             if (currentPage !== page) return;
             applyInnerpageLayout();
             img.src = innerImg.src;
+            img.classList.add('visible');
             contentOverlay.classList.remove('reveal-from-right', 'reveal-from-left');
             renderPageContent(page);
           };
