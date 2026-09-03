@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV Cover</title>
+  <title>CV for Jongsu Kim</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:center;background:#fff}
@@ -394,7 +394,7 @@
         pubData.forEach(function(row){
           var t=escapeHtml(row.content||'').replace(/(.*\.\s)([A-Z][a-zA-Z\s&]+?),\s(\d+)(\(\d+\))/,'$1<i>$2, $3</i>$4');
           h+='<div class="pub-entry"><div class="pub-text">'+t;
-          if(row.doi_link)h+=' <a href="'+escapeHtml(row.doi_link)+'" target="_blank">'+escapeHtml(row.doi_link)+'</a>';
+          if(row.doi)h+=' <a href="'+(row.doi_link?escapeHtml(row.doi_link):'#')+'" target="_blank">'+escapeHtml(row.doi)+'</a>';
           h+='</div>';
           if(row.abstrat_link)h+='<div class="pub-abstract"><a href="#" class="abstract-link" data-url="'+escapeHtml(row.abstrat_link)+'"><b><i>See Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
           h+='</div>';
@@ -594,15 +594,21 @@
       tab.addEventListener('click',function(){
         var page=tab.dataset.page,prev=currentPage;if(page===prev)return;
         currentPage=page;
-        document.querySelectorAll('.index-tab').forEach(function(t){t.classList.remove('active')});
+        var prevTab=document.querySelector('.index-tab.active');
+        var deferCoverRemove=(page==='cover');
+        if(!deferCoverRemove){
+          document.querySelectorAll('.index-tab').forEach(function(t){t.classList.remove('active')});
+        }
         var deferActive=(prev==='cover'&&page!=='cover');
-        if(!deferActive)tab.classList.add('active');
+        if(!deferActive&&!deferCoverRemove)tab.classList.add('active');
         var coverStatus=document.getElementById('coverStatus');
         if(page==='cover'){
           var f=document.getElementById('leftFadeOverlay');f.classList.remove('active');f.style.transform='';f.style.opacity='';void f.offsetWidth;f.classList.add('closing');
           var ci=new Image();ci.src='img/cv_cover.png?v='+Date.now();
           f.addEventListener('animationend',function onEnd(){
             f.removeEventListener('animationend',onEnd);if(currentPage!=='cover')return;
+            document.querySelectorAll('.index-tab').forEach(function(t){t.classList.remove('active')});
+            tab.classList.add('active');
             contentOverlay.style.display='none';contentOverlay.innerHTML='';document.getElementById('pagination').style.display='none';
             f.classList.remove('closing');f.style.transform='scaleX(1)';f.style.opacity='0';
             wrapperEl.style.width='';wrapperEl.style.height='';
