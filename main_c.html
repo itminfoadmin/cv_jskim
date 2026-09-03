@@ -27,6 +27,8 @@
     .cover-status.visible{opacity:1}
     .cover-status.hidden{opacity:0;pointer-events:none}
     .cover-status-text{font-family:"Georgia","Times New Roman",serif;font-size:clamp(10px,min(1.33vw,2.4vh),22px);color:#D4A94C;letter-spacing:.2em;font-style:italic;font-weight:bold}
+    .cover-status-text.blink{animation:blinkText 2.2s ease-in-out infinite}
+    @keyframes blinkText{0%,100%{opacity:1}50%{opacity:.25}}
     .cover-status .retry-btn{display:inline-block;margin-top:1.5vh;font-family:"Georgia","Times New Roman",serif;font-size:clamp(13px,min(1.2vw,2.1vh),20px);letter-spacing:.15em;color:#C4A265;background:transparent;border:1px solid #C4A26566;border-radius:4px;padding:.5em 2em;cursor:pointer;transition:background .3s,border-color .3s}
     .cover-status .retry-btn:hover{background:#C4A26522;border-color:#C4A265}
     .index-tab{opacity:0;transform:translateX(calc(9vw - 60px));transition:opacity .4s ease,transform .5s ease .6s,background .3s ease,color .3s ease,border-color .3s ease}
@@ -334,7 +336,7 @@
         if(mapTab&&!mapTab.classList.contains('revealed'))setTimeout(function(){mapTab.classList.add('revealed');setTimeout(function(){mapTab.classList.add('settled')},800)},150);
         new Image().src='img/cv_innerpage.png';
         setTimeout(function(){emailOverlay.classList.add('visible')},800);
-        statusText.textContent='Loading';statusCount.textContent='';statusDiv.classList.add('visible');
+        statusText.textContent='Loading';statusText.classList.add('blink');statusCount.textContent='';statusDiv.classList.add('visible');
         setTimeout(function(){var t=document.querySelector('.index-tab[data-page="introduction"]');if(t){t.classList.add('revealed');setTimeout(function(){t.classList.add('settled')},800)}},400);
         await dataFetchPromise;
         saveLocalCache();
@@ -343,7 +345,7 @@
         }
         dataReady=true;revealTabsSequentially();
         var unrevealed=0;document.querySelectorAll('.index-tab:not([data-page="cover"]):not([data-page="sitemap"])').forEach(function(t){if(!t.classList.contains('revealed'))unrevealed++});
-        setTimeout(function(){statusText.textContent='Ready';statusCount.textContent=''},Math.max(unrevealed*150+1000,1200));
+        setTimeout(function(){statusText.textContent='Ready';statusText.classList.remove('blink');statusCount.textContent=''},Math.max(unrevealed*150+1000,1200));
         if(hadLocalCache){Promise.all(batches.map(function(batch){return fetch(GAS_URL+'?sheets='+encodeURIComponent(batch.join(','))).then(function(r){return r.json()}).then(function(j){for(var k in j)cache[k]=j[k]})})).then(saveLocalCache)}
       }catch(e){
         statusDiv.classList.add('visible');
@@ -592,7 +594,9 @@
       tab.addEventListener('click',function(){
         var page=tab.dataset.page,prev=currentPage;if(page===prev)return;
         currentPage=page;
-        document.querySelectorAll('.index-tab').forEach(function(t){t.classList.remove('active')});tab.classList.add('active');
+        document.querySelectorAll('.index-tab').forEach(function(t){t.classList.remove('active')});
+        var deferActive=(prev==='cover'&&page!=='cover');
+        if(!deferActive)tab.classList.add('active');
         var coverStatus=document.getElementById('coverStatus');
         if(page==='cover'){
           var f=document.getElementById('leftFadeOverlay');f.classList.remove('active');f.style.transform='';f.style.opacity='';void f.offsetWidth;f.classList.add('closing');
@@ -621,7 +625,9 @@
           document.querySelector('.name-overlay').style.display='none';document.querySelector('.name-overlay').classList.remove('visible');
           coverStatus.classList.add('hidden');coverStatus.classList.remove('visible');
           contentOverlay.style.display='none';contentOverlay.innerHTML='';document.getElementById('pagination').style.display='none';
-          var ii=new Image();ii.onload=function(){if(currentPage!==page)return;applyInnerpageLayout();img.src=ii.src;img.classList.add('visible');contentOverlay.classList.remove('reveal-from-right','reveal-from-left');renderPageContent(page)};
+          var ii=new Image();ii.onload=function(){if(currentPage!==page)return;applyInnerpageLayout();img.src=ii.src;img.classList.add('visible');
+            tab.classList.add('active');
+            contentOverlay.classList.remove('reveal-from-right','reveal-from-left');renderPageContent(page)};
           ii.src='img/cv_innerpage.png?v='+Date.now();
         }
       });
