@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Jongsu Kim — Curriculum Vitae</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{width:100%;height:100%;overflow:hidden;background:#2C2520}
+    body{font-family:Georgia,"Times New Roman",serif}
+    .screen{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform .35s ease,opacity .35s ease}
+    .screen-cover{display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,#2C2520 0%,#3A3028 40%,#2C2520 100%);z-index:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6vh 0 8vh}
+    .screen-cover::-webkit-scrollbar{display:none}
+    .cover-badge{margin-top:2vh;border:1.5px solid #C8A96E;padding:6px 22px 5px;text-align:center;opacity:0;transition:opacity .5s ease}
+    .cover-badge.visible{opacity:1}
+    .cover-badge-sub{font-size:clamp(7px,2vw,10px);color:#C8A96E;letter-spacing:.45em;text-transform:uppercase;display:block;line-height:1.3}
+    .cover-badge-main{font-size:clamp(9px,2.8vw,13px);color:#C8A96E;letter-spacing:.55em;text-transform:uppercase;display:block;line-height:1.4}
+    .cover-name{color:#C8A96E;font-size:clamp(28px,9vw,48px);font-style:italic;letter-spacing:.06em;margin-top:4vh;opacity:0;white-space:nowrap;transition:opacity .6s ease}
+    .cover-name.visible{opacity:1}
+    .cover-email{color:#9A8A72;font-size:clamp(10px,2.8vw,14px);font-style:italic;letter-spacing:.12em;margin-top:2.5vh;opacity:0;text-decoration:none;transition:opacity .6s ease}
+    .cover-email.visible{opacity:1}
+    .cover-email::selection{background:rgba(200,169,110,.3);color:#C8A96E}
+    @keyframes reveal{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
+    .cover-nav{display:flex;flex-direction:column;align-items:center;margin-top:5vh}
+    .cover-nav-link{font-size:clamp(13px,3.8vw,17px);color:#C8A96E;letter-spacing:.06em;text-decoration:none;cursor:pointer;padding:2px 0;transition:color .2s,opacity .5s ease;opacity:0}
+    .cover-nav-link.visible{opacity:1}
+    .cover-nav-link:active{color:#E8D09E}
+    .cover-nav-dot{width:4px;height:4px;border-radius:50%;background:#6B5A3E;margin:10px 0;opacity:0;transition:opacity .5s ease}
+    .cover-nav-dot.visible{opacity:1}
+    .toc-btn{display:none}
+    .screen-toc{background:linear-gradient(160deg,#2C2520 0%,#3A3028 40%,#2C2520 100%);z-index:60;transform:translateY(100%);opacity:0;display:flex;flex-direction:column}
+    .screen-toc.open{transform:translateY(0);opacity:1}
+    .toc-header{padding:24px 24px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(200,169,110,.15)}
+    .toc-title{font-size:clamp(11px,3vw,14px);color:#9A8A72;letter-spacing:.3em;font-style:italic;text-transform:uppercase}
+    .toc-close{background:none;border:none;color:#C8A96E;font-size:24px;cursor:pointer;padding:4px 8px;line-height:1}
+    .toc-list{flex:1;overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch}
+    .toc-list::-webkit-scrollbar{display:none}
+    .toc-item{display:flex;align-items:center;padding:14px 24px;cursor:pointer;transition:background .2s}
+    .toc-item:active{background:rgba(200,169,110,.08)}
+    .toc-item.active{background:rgba(200,169,110,.06)}
+    .toc-abbr{width:32px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;font-style:italic;color:#C8A96E;letter-spacing:.02em;flex-shrink:0}
+    .toc-dot{width:4px;height:4px;border-radius:50%;background:#6B5A3E;margin:0 12px;flex-shrink:0}
+    .toc-item.active .toc-dot{background:#C8A96E}
+    .toc-label{font-size:clamp(13px,3.6vw,16px);color:#9A8A72;letter-spacing:.04em}
+    .toc-item.active .toc-label{color:#C8A96E}
+    .screen-content{background:#FAF6F0;z-index:40;transform:translateX(100%);opacity:0;display:flex;flex-direction:column}
+    .screen-content.open{transform:translateX(0);opacity:1}
+    .content-top{height:auto;display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid #E0D5C4;flex-shrink:0;background:#FAF6F0;position:sticky;top:0;z-index:5}
+    .content-section-name{flex:1;font-size:clamp(16px,4.8vw,22px);font-weight:bold;color:#2C2520;letter-spacing:.06em}
+    .content-close{background:none;border:none;font-size:clamp(11px,2.8vw,13px);color:#9A8A72;cursor:pointer;letter-spacing:.12em;padding:6px 0}
+    .content-scroll{flex:1;overflow-y:auto;padding:6vw 7vw 10vh;-webkit-overflow-scrolling:touch}
+    .content-scroll::-webkit-scrollbar{display:none}
+    .content-scroll .section-title{font-size:clamp(14px,4.2vw,20px);font-weight:bold;color:#2C2520;margin-bottom:3vh;letter-spacing:.06em;padding-bottom:1vh}
+    .content-scroll .section-title:not(:first-child){margin-top:6vh}
+    .content-scroll .content-item{font-size:clamp(12px,3.4vw,16px);color:#4A3E32;line-height:1.9;margin-bottom:1.2vh}
+    .edu-entry{margin-bottom:3vh;padding-bottom:3vh;border-bottom:1px solid #E0D5C4}
+    .edu-entry:last-child{border-bottom:none}
+    .edu-school-line{font-size:clamp(13px,3.6vw,17px);color:#2C2520;margin-bottom:4px}
+    .edu-school-name{font-weight:bold}
+    .edu-period{display:block;font-size:clamp(11px,2.8vw,14px);color:#7A6E5E;margin-top:3px;font-style:italic}
+    .edu-detail{font-size:clamp(11px,3vw,15px);color:#4A3E32;line-height:1.8;padding-left:4vw;margin-top:6px}
+    .edu-detail a{color:#2C2520;text-decoration:none}
+    .edu-detail .abstract-link{display:block;margin-top:6px;text-align:right}
+    .edu-detail .ext-icon{display:inline-block;margin-left:.3em;font-size:clamp(10px,2.6vw,13px);vertical-align:middle;opacity:.7}
+    .content-bullet{font-size:clamp(12px,3.4vw,16px);color:#2C2520;line-height:1.9;margin-bottom:3vh;padding-left:5vw;text-indent:-5vw}
+    .content-bullet::before{content:'· ';font-weight:bold}
+    .content-hanging{font-size:clamp(11px,3.1vw,15px);color:#2C2520;line-height:2;margin-bottom:3vh;padding-bottom:3vh;padding-left:5vw;text-indent:-5vw;border-bottom:1px solid #E0D5C4}
+    .content-hanging:last-child{border-bottom:none}
+    .disc-entry{margin-bottom:3vh;padding-bottom:3vh;border-bottom:1px solid #E0D5C4}
+    .disc-entry:last-child{border-bottom:none}
+    .disc-title-line{font-size:clamp(13px,3.6vw,17px);color:#2C2520}
+    .disc-title{font-weight:bold;display:block}
+    .disc-date{font-size:clamp(11px,2.8vw,14px);color:#7A6E5E;font-style:italic}
+    .disc-desc{font-size:clamp(11px,3vw,15px);color:#4A3E32;line-height:1.8;padding-left:4vw;margin-top:6px}
+    .prof-entry{margin-bottom:3vh;padding-bottom:3vh;border-bottom:1px solid #E0D5C4}
+    .prof-entry:last-child{border-bottom:none}
+    .prof-org{font-size:clamp(13px,3.6vw,17px);font-weight:bold;color:#2C2520;line-height:1.6}
+    .prof-detail{font-size:clamp(11px,3vw,15px);color:#4A3E32;line-height:1.8;padding-left:4vw;margin-top:6px}
+    .prof-role-title{font-weight:bold;font-style:italic}
+    .prof-period{display:block;color:#7A6E5E;font-style:italic;margin-top:3px}
+    .prof-period-only{font-size:clamp(11px,3vw,15px);color:#7A6E5E;font-style:italic;margin-top:4px}
+    .award-entry{margin-bottom:2.5vh;padding-bottom:2.5vh;border-bottom:1px solid #E0D5C4}
+    .award-entry:last-child{border-bottom:none}
+    .award-title{font-size:clamp(13px,3.6vw,17px);font-weight:bold;color:#2C2520;line-height:1.6}
+    .award-detail{font-size:clamp(11px,3vw,15px);color:#4A3E32;line-height:1.8;padding-left:4vw;margin-top:4px}
+    .award-date{display:block;color:#7A6E5E;font-style:italic;margin-top:3px}
+    .cert-entry{margin-bottom:2.5vh;padding-bottom:2.5vh;border-bottom:1px solid #E0D5C4}
+    .cert-entry:last-child{border-bottom:none}
+    .cert-name{font-size:clamp(13px,3.6vw,17px);font-weight:bold;color:#2C2520;line-height:1.6}
+    .cert-detail{font-size:clamp(11px,3vw,15px);color:#4A3E32;line-height:1.8;padding-left:4vw;margin-top:4px}
+    .cert-date{display:block;color:#7A6E5E;font-style:italic;margin-top:3px}
+    .teach-block{margin-bottom:3vh}
+    .teach-block+.teach-block{padding-top:3vh;border-top:1px solid #E0D5C4}
+    .teach-org-line{font-size:clamp(13px,3.6vw,17px);color:#2C2520}
+    .teach-org-name{font-weight:bold}
+    .teach-period{display:block;font-size:clamp(11px,2.8vw,14px);color:#7A6E5E;font-style:italic;margin-top:3px}
+    .teach-role{font-size:clamp(11px,3vw,15px);font-style:italic;font-weight:bold;color:#2C2520;padding-left:4vw;margin-top:1.5vh}
+    .teach-sub{font-size:clamp(11px,3vw,15px);color:#4A3E32;padding-left:6vw;margin-top:1vh}
+    .teach-sub::before{content:'· '}
+    .teach-sub .teach-period{display:inline;padding-left:1vw;margin-top:0}
+    .pub-entry{margin-bottom:2.5vh;padding-bottom:2.5vh;border-bottom:1px solid #E0D5C4}
+    .pub-entry:last-child{border-bottom:none}
+    .pub-text{font-size:clamp(11px,3.1vw,15px);color:#2C2520;line-height:2;padding-left:5vw;text-indent:-5vw}
+    .pub-text a{color:#5A4632;text-decoration:none;word-break:break-all}
+    .pub-abstract{text-align:right;margin-top:4px}
+    .pub-abstract a{font-size:clamp(10px,2.8vw,14px);color:#7A6E5E;text-decoration:none;font-weight:bold;font-style:italic}
+    .pub-abstract .ext-icon{vertical-align:middle;margin-left:.2em;opacity:.7}
+    .cv-download-btn{display:inline-block;padding:.9em 2.5em;font-size:clamp(12px,3.4vw,16px);font-style:italic;color:#2C2520;background:linear-gradient(180deg,rgba(200,169,110,.2) 0%,rgba(200,169,110,.08) 100%);border:1.5px solid #C8A96E;border-radius:5px;text-decoration:none;letter-spacing:.1em;cursor:pointer}
+    .cv-download-btn:active{transform:translateY(1px)}
+    .sitemap-container{display:flex;flex-direction:column;gap:clamp(12px,3vh,24px);margin-top:1vh}
+    .sitemap-row{display:flex;align-items:center}
+    .sitemap-label{width:clamp(28px,8vw,38px);height:clamp(22px,6vw,30px);display:flex;align-items:center;justify-content:center;background:#2C2520;border-radius:3px;font-size:clamp(9px,2.5vw,12px);font-weight:bold;font-style:italic;color:#C8A96E;flex-shrink:0}
+    .sitemap-line{width:clamp(16px,5vw,32px);height:1px;background:linear-gradient(to right,#C8A96E,#E0D5C4);position:relative;flex-shrink:0}
+    .sitemap-line::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:4px;height:4px;background:#C8A96E;border-radius:50%}
+    .sitemap-name{font-size:clamp(12px,3.4vw,16px);color:#2C2520;padding-left:clamp(6px,2vw,10px)}
+    .section-loading{display:flex;flex-direction:column;align-items:center;padding:20vh 0}
+    .section-loading-spinner{width:24px;height:24px;border:2px solid #E0D5C4;border-top:2px solid #C8A96E;border-radius:50%;animation:spin 1s linear infinite}
+    .section-loading-text{font-size:11px;color:#9A8A72;margin-top:12px;font-style:italic;letter-spacing:.08em}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(20,16,12,.85);z-index:200;justify-content:center;align-items:flex-end}
+    .modal-overlay.open{display:flex}
+    .modal-container{width:100%;height:92vh;background:#FAF6F0;border-radius:12px 12px 0 0;display:flex;flex-direction:column;overflow:hidden}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #E0D5C4;flex-shrink:0}
+    .modal-title{font-size:13px;font-style:italic;color:#5A4632;letter-spacing:.08em}
+    .modal-close{background:none;border:1px solid #E0D5C4;border-radius:4px;color:#7A6E5E;font-size:11px;padding:5px 12px;cursor:pointer;letter-spacing:.08em}
+    .modal-body{flex:1;overflow:hidden;position:relative;background:#E8E8E8}
+    .modal-body iframe{position:absolute;top:0;left:0;border:none;transform-origin:0 0;-webkit-overflow-scrolling:touch}
+    .modal-loading{position:absolute;top:0;left:0;right:0;bottom:0;background:#E8E8E8;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2;transition:opacity .4s ease}
+    .modal-loading.hidden{opacity:0;pointer-events:none}
+    .modal-loading p{font-size:12px;color:#7A6E5E;margin-top:12px;font-style:italic}
+  </style>
+</head>
+<body>
+  <div class="screen screen-cover" id="screenCover">
+    <div class="cover-badge" id="coverBadge">
+      <span class="cover-badge-sub">Curriculum</span>
+      <span class="cover-badge-main">V I T E A</span>
+    </div>
+    <div class="cover-name" id="coverName">Jongsu Kim</div>
+    <a class="cover-email" id="coverEmail" href="mailto:nicobass5735@gmail.com">nicobass5735@gmail.com</a>
+    <div class="cover-nav" id="coverNav"></div>
+  </div>
+  <div class="screen screen-content" id="screenContent">
+    <div class="content-top">
+      <span class="content-section-name" id="contentSectionName"></span>
+      <button class="content-close" id="contentClose">CLOSE</button>
+    </div>
+    <div class="content-scroll" id="contentScroll"></div>
+  </div>
+  <div class="screen screen-toc" id="screenToc">
+    <div class="toc-header">
+      <span class="toc-title">Contents</span>
+      <button class="toc-close" id="tocClose">&times;</button>
+    </div>
+    <div class="toc-list" id="tocList"></div>
+  </div>
+  <button class="toc-btn" id="tocBtn"><svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg></button>
+  <div class="modal-overlay" id="abstractModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitleEl">Abstract</span>
+        <div style="display:flex;gap:6px;">
+          <button class="modal-close" id="modalPrint">PDF</button>
+          <button class="modal-close" id="modalClose">CLOSE</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-loading" id="modalLoading"><div class="section-loading-spinner"></div><p>Loading...</p></div>
+        <iframe id="modalIframe" src="" sandbox="allow-same-origin allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+  <script>
+    var GAS_URL='https://script.google.com/macros/s/AKfycbwOI0P1oMCyJYfnTkzsZFfpMcDxGIwQvnHFlSfSyeB1-o08-Xmd1crX-wXE107HfY4L/exec';
+    var coverBadge=document.getElementById('coverBadge');
+    var coverName=document.getElementById('coverName');
+    var coverEmail=document.getElementById('coverEmail');
+    var coverNav=document.getElementById('coverNav');
+    var screenContent=document.getElementById('screenContent');
+    var screenToc=document.getElementById('screenToc');
+    var contentScroll=document.getElementById('contentScroll');
+    var tocBtn=document.getElementById('tocBtn');
+    var currentPage='cover';
+    var cache={};
+    var dataReady=false;
+    var pubData=[];
+    var ALL_SHEETS=['01_ongoing_research','02_ongoing_study','03_education','04_reaserch_interest','05_publications','06_presentations','07_discussion_participant','08_teaching_experience-1','09_teaching_experience-2','10_certicication','11_profession_experience','12_awards_and_scholarships','15_cv_link'];
+    var SECTIONS=[
+      {page:'cover',abbr:'C',label:'Cover'},
+      {page:'introduction',abbr:'I',label:'Introduction'},
+      {page:'education',abbr:'E',label:'Education'},
+      {page:'research-interests',abbr:'RI',label:'Research Interests'},
+      {page:'publications',abbr:'P',label:'Publications'},
+      {page:'presentations',abbr:'P',label:'Presentations'},
+      {page:'discussion',abbr:'DP',label:'Discussion Participant'},
+      {page:'teaching',abbr:'TE',label:'Teaching Experience'},
+      {page:'professional',abbr:'PE',label:'Professional Experiences'},
+      {page:'certification',abbr:'CT',label:'Certification'},
+      {page:'awards',abbr:'AS',label:'Awards & Scholarships'},
+      {page:'ongoing-research',abbr:'OR',label:'Ongoing Research & Study'},
+      {page:'sitemap',abbr:'MAP',label:'Site Map'}
+    ];
+    function escapeHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+    function filterByDsp(rows){return rows.filter(function(r){return String(r.dsp)!=='0'})}
+    function sortDesc(rows){rows.sort(function(a,b){return(b.no_||b.no_num||0)-(a.no_||a.no_num||0)});return rows}
+    function loadLocalCache(){try{var d=localStorage.getItem('cv_data');if(d){var p=JSON.parse(d);if(Date.now()-p.ts<300000){for(var k in p.d)cache[k]=p.d[k];return true}}}catch(e){}return false}
+    function saveLocalCache(){try{localStorage.setItem('cv_data',JSON.stringify({ts:Date.now(),d:cache}))}catch(e){}}
+    var hadLocalCache=loadLocalCache();
+    var batches=[
+      ['01_ongoing_research','02_ongoing_study','03_education','04_reaserch_interest','05_publications','06_presentations','15_cv_link'],
+      ['07_discussion_participant','08_teaching_experience-1','09_teaching_experience-2','10_certicication','11_profession_experience','12_awards_and_scholarships']
+    ];
+    var dataFetchPromise=(function(){if(hadLocalCache)return Promise.resolve();return Promise.all(batches.map(function(b){return fetch(GAS_URL+'?sheets='+encodeURIComponent(b.join(','))).then(function(r){return r.json()}).then(function(j){for(var k in j)cache[k]=j[k]})}))})();
+    async function fetchFromGAS(names){
+      var needed=names.filter(function(s){return!(s in cache)});
+      if(needed.length>0){var r=await fetch(GAS_URL+'?sheets='+encodeURIComponent(needed.join(',')));if(!r.ok)throw new Error('Network error');var j=await r.json();for(var k in j)cache[k]=j[k]}
+      var out={};names.forEach(function(s){out[s]=cache[s]||[]});return out;
+    }
+    /* Build cover navigation links */
+    (function buildCoverNav(){
+      var navSections=SECTIONS.filter(function(s){return s.page!=='cover'&&s.page!=='sitemap'});
+      navSections.forEach(function(s,i){
+        var link=document.createElement('span');
+        link.className='cover-nav-link';
+        link.textContent=s.label;
+        link.addEventListener('click',function(){navigateTo(s.page)});
+        coverNav.appendChild(link);
+        if(i<navSections.length-1){
+          var dot=document.createElement('span');
+          dot.className='cover-nav-dot';
+          coverNav.appendChild(dot);
+        }
+      });
+    })();
+    async function preload(){
+      try{
+        coverBadge.classList.add('visible');
+        await new Promise(function(r){setTimeout(r,300)});
+        coverName.classList.add('visible');
+        coverEmail.classList.add('visible');
+        await dataFetchPromise;saveLocalCache();dataReady=true;
+        var items=coverNav.children;
+        var delay=0;
+        for(var i=0;i<items.length;i++){
+          (function(el,d){setTimeout(function(){el.classList.add('visible')},d)})(items[i],delay);
+          delay+=items[i].classList.contains('cover-nav-dot')?40:100;
+        }
+        if(hadLocalCache){Promise.all(batches.map(function(b){return fetch(GAS_URL+'?sheets='+encodeURIComponent(b.join(','))).then(function(r){return r.json()}).then(function(j){for(var k in j)cache[k]=j[k]})})).then(saveLocalCache)}
+      }catch(e){}
+    }
+    preload();
+    (function buildToc(){
+      var list=document.getElementById('tocList');
+      SECTIONS.forEach(function(s){
+        var item=document.createElement('div');
+        item.className='toc-item'+(s.page==='cover'?' active':'');
+        item.dataset.page=s.page;
+        item.innerHTML='<span class="toc-abbr">'+s.abbr+'</span><span class="toc-dot"></span><span class="toc-label">'+s.label+'</span>';
+        item.addEventListener('click',function(){navigateTo(s.page)});
+        list.appendChild(item);
+      });
+    })();
+    tocBtn.addEventListener('click',function(){screenToc.classList.add('open');updateTocActive()});
+    document.getElementById('tocClose').addEventListener('click',function(){screenToc.classList.remove('open')});
+    document.getElementById('contentClose').addEventListener('click',function(){screenContent.classList.remove('open');currentPage='cover';updateTocActive()});
+    function updateTocActive(){document.querySelectorAll('.toc-item').forEach(function(i){i.classList.toggle('active',i.dataset.page===currentPage)})}
+    function navigateTo(page){
+      screenToc.classList.remove('open');
+      if(page==='cover'){screenContent.classList.remove('open');currentPage='cover';updateTocActive();return}
+      currentPage=page;updateTocActive();
+      var sec=SECTIONS.find(function(s){return s.page===page});
+      document.getElementById('contentSectionName').textContent=sec?sec.label:'';
+      contentScroll.scrollTop=0;
+      screenContent.classList.add('open');
+      if(renderMap[page])renderMap[page]();
+    }
+    function showLoading(){contentScroll.innerHTML='<div class="section-loading"><div class="section-loading-spinner"></div><div class="section-loading-text">Loading...</div></div>'}
+    async function renderIntroduction(){
+      var h='<div class="content-item" style="line-height:2.2;margin-top:2vh;">This website serves as <b>Jongsu Kim\'s Curriculum Vitae (CV)</b>, covering everything from education to ongoing studies. You can view each section from the menu, or view the full CV document below.</div>';
+      var cvUrl='';try{var d=await fetchFromGAS(['15_cv_link']);var rows=d['15_cv_link']||[];if(rows.length>0)cvUrl=rows[0].url||rows[0].URL||rows[0].link||''}catch(e){}
+      h+='<div style="margin-top:6vh;text-align:center;"><a href="#" class="cv-download-btn" id="cvDlBtn" data-url="'+escapeHtml(cvUrl)+'">See CV Docs</a></div>';
+      contentScroll.innerHTML=h;
+      var btn=document.getElementById('cvDlBtn');
+      if(btn)btn.addEventListener('click',function(e){e.preventDefault();var u=btn.getAttribute('data-url');if(u){document.getElementById('modalTitleEl').textContent='Curriculum Vitae';openModal(u)}});
+    }
+    async function renderOngoingResearch(){
+      showLoading();
+      try{var d=await fetchFromGAS(['01_ongoing_research','02_ongoing_study']);var h='';
+      var r1=filterByDsp(d['01_ongoing_research']||[]);h+='<div class="section-title">Ongoing Research</div>';r1.forEach(function(r){h+='<div class="content-item">'+escapeHtml(r.content)+'</div>'});
+      var r2=filterByDsp(d['02_ongoing_study']||[]);h+='<div class="section-title">Ongoing Study</div>';r2.forEach(function(r){h+='<div class="content-item">'+escapeHtml(r.content)+'</div>'});
+      contentScroll.innerHTML=h}catch(e){}
+    }
+    async function renderEducation(){
+      showLoading();
+      try{var d=await fetchFromGAS(['03_education']);var rows=filterByDsp(d['03_education']||[]);rows.sort(function(a,b){return b.no_num-a.no_num});
+      var h='';
+      rows.forEach(function(r){var school=escapeHtml(r.school_name||''),region=escapeHtml(r.region||''),period=escapeHtml(r.period||''),degree=r['degree/major']?escapeHtml(r['degree/major']):'',thesis=r.thesis?escapeHtml(r.thesis):'',advisor=r.advisor?escapeHtml(r.advisor):'',link=r.abstrat_link||'';
+      h+='<div class="edu-entry">';
+      if(degree){h+='<div class="edu-school-line"><span class="edu-school-name">'+school+'</span>'+(region?', '+region:'')+'</div><div class="edu-detail"><div>'+degree+'</div><span class="edu-period">'+period+'</span>';
+      if(thesis)h+='<div>Thesis: '+thesis+'</div>';
+      if(advisor&&link)h+='<div>Advisor: '+advisor+' <a href="#" class="abstract-link" data-url="'+escapeHtml(link)+'"><b><i>Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
+      else if(advisor)h+='<div>Advisor: '+advisor+'</div>';
+      else if(link)h+='<div><a href="#" class="abstract-link" data-url="'+escapeHtml(link)+'"><b><i>Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
+      h+='</div>'}else{h+='<div class="edu-school-line"><span class="edu-school-name">'+school+'</span>, '+region+'<span class="edu-period">'+period+'</span></div>'}
+      h+='</div>'});contentScroll.innerHTML=h}catch(e){}
+    }
+    async function renderResearchInterests(){showLoading();try{var d=await fetchFromGAS(['04_reaserch_interest']);var rows=filterByDsp(d['04_reaserch_interest']||[]);var h='';rows.forEach(function(r){h+='<div class="content-bullet">'+escapeHtml(r.content)+'</div>'});contentScroll.innerHTML=h}catch(e){}}
+    async function renderPublications(){showLoading();try{if(!pubData.length){var d=await fetchFromGAS(['05_publications']);pubData=filterByDsp(sortDesc(d['05_publications']||[]))}var h='';pubData.forEach(function(row){var t=escapeHtml(row.content||'').replace(/(.*\.\s)([A-Z][a-zA-Z\s&]+?),\s(\d+)(\(\d+\))/,'$1<i>$2, $3</i>$4');h+='<div class="pub-entry"><div class="pub-text">'+t;if(row.doi)h+=' <a href="'+(row.doi_link?escapeHtml(row.doi_link):'#')+'" target="_blank">'+escapeHtml(row.doi)+'</a>';h+='</div>';if(row.abstrat_link)h+='<div class="pub-abstract"><a href="#" class="abstract-link" data-url="'+escapeHtml(row.abstrat_link)+'"><b><i>Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';h+='</div>'});contentScroll.innerHTML=h}catch(e){}}
+    async function renderPresentations(){showLoading();try{var d=await fetchFromGAS(['06_presentations']);var rows=filterByDsp(sortDesc(d['06_presentations']||[]));var h='';rows.forEach(function(r){h+='<div class="content-hanging">'+escapeHtml(r.content||'').replace(/^(.*?\)\.\s)(.*?)(\.\s)/,'$1<i>$2</i>$3')+'</div>'});contentScroll.innerHTML=h}catch(e){}}
+    async function renderDiscussion(){showLoading();try{var d=await fetchFromGAS(['07_discussion_participant']);var rows=filterByDsp(sortDesc(d['07_discussion_participant']||[]));var h='';rows.forEach(function(r){h+='<div class="disc-entry"><div class="disc-title-line"><span class="disc-title">'+escapeHtml(r.content||'')+'</span>';if(r['data/region'])h+='<span class="disc-date">('+escapeHtml(r['data/region'])+')</span>';h+='</div>';if(r.deciption)h+='<div class="disc-desc">'+escapeHtml(r.deciption)+'</div>';h+='</div>'});contentScroll.innerHTML=h}catch(e){}}
+    async function renderTeaching(){showLoading();try{var d=await fetchFromGAS(['08_teaching_experience-1','09_teaching_experience-2']);var h='';var t1=filterByDsp(d['08_teaching_experience-1']||[]);if(!t1.error){var m1=t1.filter(function(r){return r.category==1}),s1=t1.filter(function(r){return r.category==2});m1.forEach(function(m){h+='<div class="teach-block"><div class="teach-org-line"><span class="teach-org-name">'+escapeHtml(m.organization||m['organization/subject/role']||'')+'</span>';if(m.period)h+='<span class="teach-period">'+escapeHtml(m.period)+'</span>';h+='</div>';var role=m['subject/role']||'';if(role)h+='<div class="teach-role">'+escapeHtml(role)+'</div>';s1.filter(function(s){return s.upper_level==m.no_||s.upper_level==(m.no_num||m.no_)}).sort(function(a,b){return(b.no_||b.no_num||0)-(a.no_||a.no_num||0)}).forEach(function(c){h+='<div class="teach-sub"><span>'+escapeHtml(c.organization||c['organization/subject/role']||'')+'</span>';if(c.period)h+='<span class="teach-period">'+escapeHtml(c.period)+'</span>';h+='</div>'});h+='</div>'})}var t2=filterByDsp(d['09_teaching_experience-2']||[]);if(!t2.error){var m2=t2.filter(function(r){return r.category==1}),s2=t2.filter(function(r){return r.category==2});m2.forEach(function(m){h+='<div class="teach-block"><div class="teach-org-line"><span class="teach-org-name">'+escapeHtml(m['organization/subject/role']||m.organization||'')+'</span>';if(m.period)h+='<span class="teach-period">'+escapeHtml(m.period)+'</span>';h+='</div>';var cr='';s2.filter(function(s){return s.upper_level==m.no_||s.upper_level==(m.no_num||m.no_)}).sort(function(a,b){return(a.no_||a.no_num||0)-(b.no_||b.no_num||0)}).forEach(function(c){var rl=c['organization/subject/role']||'';if(rl!==cr){cr=rl;h+='<div class="teach-role">'+escapeHtml(rl)+'</div>'}h+='<div class="teach-sub"><span>'+escapeHtml(c.course_name||'')+'</span>';if(c.period)h+='<span class="teach-period">'+escapeHtml(c.period)+'</span>';h+='</div>'});h+='</div>'})}contentScroll.innerHTML=h}catch(e){}}
+    async function renderProfessional(){showLoading();try{var d=await fetchFromGAS(['11_profession_experience']);var rows=filterByDsp(sortDesc(d['11_profession_experience']||[]));var h='';rows.forEach(function(r){var org=escapeHtml(r.organization||''),rd=r['role/description']||'',period=escapeHtml(r.period||'');h+='<div class="prof-entry"><div class="prof-org">'+org+'</div>';if(rd){var ci=rd.indexOf(':'),rh=ci>-1?'<span class="prof-role-title">'+escapeHtml(rd.substring(0,ci))+'</span>: '+escapeHtml(rd.substring(ci+1).trim()):'<span class="prof-role-title">'+escapeHtml(rd)+'</span>';h+='<div class="prof-detail"><div>'+rh+'</div><span class="prof-period">'+period+'</span></div>'}else if(period)h+='<div class="prof-period-only">'+period+'</div>';h+='</div>'});contentScroll.innerHTML=h}catch(e){}}
+    async function renderCertification(){showLoading();try{var d=await fetchFromGAS(['10_certicication']);var rows=filterByDsp(sortDesc(d['10_certicication']||[]));var h='';rows.forEach(function(r){h+='<div class="cert-entry"><div class="cert-name">'+escapeHtml(r.name||'')+'</div><div class="cert-detail"><span>'+escapeHtml(r.description||'')+'</span><span class="cert-date">'+escapeHtml(r.date||'')+'</span></div></div>'});contentScroll.innerHTML=h}catch(e){}}
+    async function renderAwards(){showLoading();try{var d=await fetchFromGAS(['12_awards_and_scholarships']);var rows=filterByDsp(sortDesc(d['12_awards_and_scholarships']||[]));var h='';rows.forEach(function(r){h+='<div class="award-entry"><div class="award-title">'+escapeHtml(r.awards_and_scholarships||'')+'</div><div class="award-detail"><span>'+escapeHtml(r.organization||'')+'</span><span class="award-date">'+escapeHtml(r.date||'')+'</span></div></div>'});contentScroll.innerHTML=h}catch(e){}}
+    function renderSitemap(){var tabs=SECTIONS.filter(function(s){return s.page!=='sitemap'});var h='<div class="sitemap-container">';tabs.forEach(function(t){h+='<div class="sitemap-row"><div class="sitemap-label">'+t.abbr+'</div><div class="sitemap-line"></div><div class="sitemap-name">'+t.label+'</div></div>'});h+='</div>';contentScroll.innerHTML=h}
+    var renderMap={introduction:renderIntroduction,education:renderEducation,'research-interests':renderResearchInterests,publications:function(){pubData=[];renderPublications()},presentations:renderPresentations,discussion:renderDiscussion,teaching:renderTeaching,professional:renderProfessional,certification:renderCertification,awards:renderAwards,'ongoing-research':renderOngoingResearch,sitemap:renderSitemap};
+    var modalOverlay=document.getElementById('abstractModal'),modalIframe=document.getElementById('modalIframe');
+    document.getElementById('modalClose').addEventListener('click',closeModal);
+    document.getElementById('modalPrint').addEventListener('click',function(){var s=modalIframe.src;if(s)window.open(s.replace(/\/preview.*$/,'/export?format=pdf'),'_blank')});
+    modalOverlay.addEventListener('click',function(e){if(e.target===modalOverlay)closeModal()});
+    function openModal(url){
+      var l=document.getElementById('modalLoading');l.classList.remove('hidden');
+      var u=url.replace(/\/(edit|preview).*$/,'/preview?embedded=true');
+      var body=document.querySelector('.modal-body');
+      var mw=body.clientWidth||window.innerWidth;
+      var mh=body.clientHeight||(window.innerHeight*0.88);
+      var docW=1040;
+      var s=mw/docW;
+      modalIframe.style.width=docW+'px';
+      modalIframe.style.height=Math.ceil(mh/s)+'px';
+      modalIframe.style.transform='scale('+s+')';
+      modalIframe.src=u;
+      modalOverlay.classList.add('open');
+      modalIframe.onload=function(){l.classList.add('hidden')};
+    }
+    function closeModal(){modalOverlay.classList.remove('open');modalIframe.src='';document.getElementById('modalLoading').classList.remove('hidden');document.getElementById('modalTitleEl').textContent='Abstract'}
+    contentScroll.addEventListener('click',function(e){var link=e.target.closest('.abstract-link');if(link){e.preventDefault();openModal(link.getAttribute('data-url'))}});
+  </script>
+</body>
+</html>
