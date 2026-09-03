@@ -45,7 +45,7 @@
     .mng-y-link{color:inherit;text-decoration:none;cursor:default}
     .content-overlay .content-item{font-family:"Times New Roman",Times,serif;font-size:clamp(10px,min(1.33vw,2.4vh),22px);color:#5A4632;line-height:1.7;margin-bottom:.6vh}
     .content-overlay .loading{font-family:"Georgia","Times New Roman",serif;font-size:clamp(9px,min(1.15vw,2.05vh),19px);color:#999;font-style:italic;line-height:1.8}
-    .edu-entry{margin-bottom:3.9vh;padding-bottom:3.9vh;border-bottom:1px solid #C8B89A}
+    .edu-entry{margin-bottom:4.5vh;padding-bottom:4.5vh;border-bottom:1px solid #C8B89A}
     .edu-entry:last-child{border-bottom:none}
     .edu-school-line{display:flex;justify-content:space-between;align-items:baseline;font-family:"Times New Roman",Times,serif;font-size:clamp(10px,min(1.33vw,2.4vh),22px);color:#3C2415;margin-bottom:.3vh}
     .edu-school-name{font-weight:bold}
@@ -255,6 +255,7 @@
     var pubData=[];
     var revealedCount=0;
     var genericPagState={html:'',page:1,sectionId:''};
+    var eduPagState={html:'',page:1,perPage:3};
     var ALL_SHEETS=['01_ongoing_research','02_ongoing_study','03_education','04_reaserch_interest','05_publications','06_presentations','07_discussion_participant','08_teaching_experience-1','09_teaching_experience-2','10_certicication','11_profession_experience','12_awards_and_scholarships','15_cv_link'];
     var SHEET_TO_TAB={'01_ongoing_research':'ongoing-research','03_education':'education','04_reaserch_interest':'research-interests','05_publications':'publications','06_presentations':'presentations','07_discussion_participant':'discussion','08_teaching_experience-1':'teaching','10_certicication':'certification','11_profession_experience':'professional','12_awards_and_scholarships':'awards'};
     contentOverlay.addEventListener('animationend',function(){contentOverlay.classList.remove('reveal-from-right','reveal-from-left');contentOverlay.style.clipPath=''});
@@ -385,6 +386,25 @@
         prev.onclick=function(){if(genericPagState.page>1)renderGenericPage(genericPagState.page-1)};
         next.onclick=function(){if(genericPagState.page<total)renderGenericPage(genericPagState.page+1)};
       });
+    }
+    function applyEduPagination(fullHtml){eduPagState.html=fullHtml;eduPagState.page=1;renderEduPage(1)}
+    function renderEduPage(page){
+      contentOverlay.innerHTML=eduPagState.html;contentOverlay.style.display='block';
+      var pag=document.getElementById('pagination');
+      var items=contentOverlay.querySelectorAll('.edu-entry');
+      if(!items.length){pag.style.display='none';return}
+      var pp=eduPagState.perPage,total=Math.ceil(items.length/pp);
+      var safe=Math.max(1,Math.min(page,total));eduPagState.page=safe;
+      items.forEach(function(item){item.style.display='none'});
+      var start=(safe-1)*pp,end=Math.min(start+pp,items.length);
+      for(var i=start;i<end;i++){items[i].style.display='';if(i===end-1){items[i].style.borderBottom='none';items[i].style.marginBottom='0';items[i].style.paddingBottom='0'}}
+      contentOverlay.querySelectorAll('.section-title').forEach(function(t){t.style.display=''});
+      if(total<=1){pag.style.display='none';return}
+      pag.style.display='flex';
+      var prev=document.getElementById('prevPage'),next=document.getElementById('nextPage'),info=document.getElementById('pageInfo');
+      info.textContent=safe+' / '+total;prev.disabled=safe<=1;next.disabled=safe>=total;
+      prev.onclick=function(){if(eduPagState.page>1)renderEduPage(eduPagState.page-1)};
+      next.onclick=function(){if(eduPagState.page<total)renderEduPage(eduPagState.page+1)};
     }
     async function renderPublications(){
       showSectionLoading();document.getElementById('pagination').style.display='none';
@@ -546,7 +566,7 @@
           }else{h+='<div class="edu-school-line"><span><span class="edu-school-name">'+school+'</span>, '+region+'</span><span class="edu-period">'+period+'</span></div>'}
           h+='</div>';
         });
-        applyGenericPagination(h,'education');
+        applyEduPagination(h);
       }catch(e){}
     }
     function renderSitemap(){
