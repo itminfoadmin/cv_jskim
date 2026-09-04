@@ -34,9 +34,11 @@
     .index-tab{opacity:0;transform:translateX(calc(9vw - 60px));transition:opacity .4s ease,transform .5s ease .6s,background .3s ease,color .3s ease,border-color .3s ease}
     .index-tab.revealed{opacity:1;transform:translateX(calc(9vw - 60px));background:linear-gradient(135deg,#4a3c28 0%,#6b5a3e 50%,#4a3c28 100%);color:#e8d5a8;border-color:#c4a265}
     .index-tab.settled{transform:translateX(0);background:linear-gradient(135deg,#2a2318 0%,#3d3225 50%,#2a2318 100%);color:transparent;border-color:#6b5a3e}
-    .index-tab[data-page="cover"]{opacity:0;visibility:hidden;transform:translateX(0)}
+    .index-tab[data-page="cover"]{opacity:0;visibility:hidden;transform:translateX(0);background:linear-gradient(135deg,#1a1815 0%,#2a2622 50%,#1a1815 100%);border-color:#3d3830}
     .index-tab[data-page="cover"].cover-ready{opacity:1;visibility:visible}
-    .index-tab[data-page="cover"].active{z-index:1}
+    .index-tab[data-page="cover"].active{z-index:1;background:linear-gradient(135deg,#252220 0%,#36322e 50%,#252220 100%);border-color:#5a5040;color:#c4a870}
+    .index-tab[data-page="cover"]:hover{background:linear-gradient(135deg,#252220 0%,#36322e 50%,#252220 100%);border-color:#5a5040;color:#c4a870}
+    .index-tab[data-page="cover"] .tab-abbr{color:#8a7a60;opacity:.8}
     .content-overlay{position:absolute;top:5%;left:10%;right:4%;bottom:5%;z-index:3;display:none;overflow-y:hidden;padding:3% 5% 3% 4%;scrollbar-width:none}
     .content-overlay::-webkit-scrollbar{display:none}
     .content-overlay .section-title{font-family:"Times New Roman",Times,serif;font-size:clamp(12px,min(1.8vw,3.2vh),30px);font-weight:bold;color:#3C2415;margin-top:4vh;margin-bottom:4.5vh;letter-spacing:.05em;text-decoration:underline;text-underline-offset:.4em}
@@ -109,13 +111,14 @@
     .content-overlay.reveal-from-left{animation:revealFromLeft .25s ease-out forwards}
     @keyframes revealFromRight{0%{clip-path:inset(0 0 0 100%)}100%{clip-path:inset(0 0 0 0)}}
     @keyframes revealFromLeft{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
-    .sitemap-container{display:flex;gap:clamp(10px,2vw,30px);margin-top:2vh;padding:0 2vw}
-    .sitemap-column{flex:1;display:flex;flex-direction:column;gap:clamp(20px,3.8vh,46px)}
-    .sitemap-row{display:flex;align-items:center;gap:0}
-    .sitemap-label{flex-shrink:0;width:clamp(32px,min(3.5vw,5.5vh),52px);height:clamp(26px,min(3vw,4.2vh),42px);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2a2318 0%,#3d3225 50%,#2a2318 100%);border:1px solid #6b5a3e;border-radius:3px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(11px,min(1.1vw,1.9vh),17px);font-weight:bold;font-style:italic;color:#e8d5a8;letter-spacing:.02em}
-    .sitemap-line{flex-shrink:0;width:clamp(24px,min(3.5vw,5.5vh),55px);height:1px;background:linear-gradient(to right,#c4a265,#c8b89a);position:relative}
-    .sitemap-line::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:clamp(4px,.45vw,7px);height:clamp(4px,.45vw,7px);background:#c4a265;border-radius:50%}
-    .sitemap-name{font-family:"Times New Roman",Times,serif;font-size:clamp(12px,min(1.35vw,2.4vh),22px);color:#3C2415;padding-left:clamp(8px,.8vw,14px);letter-spacing:.03em;white-space:nowrap}
+    .sitemap-container{display:flex;flex-direction:column;justify-content:space-between;flex:1;padding:5vh 4vw 6vh}
+    .sitemap-entry{display:flex;align-items:baseline;font-family:"Times New Roman",Times,serif;font-size:clamp(12px,min(1.4vw,2.5vh),23px);color:#3C2415;line-height:1.3;transition:color .2s}
+    .sitemap-entry.sitemap-ready{cursor:pointer}
+    .sitemap-entry.sitemap-ready:hover{color:#D4A94C}
+    .sitemap-entry-name{flex-shrink:0;letter-spacing:.04em}
+    .sitemap-entry-dots{flex:1;overflow:hidden;white-space:nowrap;margin:0 .4em;letter-spacing:.1em;color:#5A4632;opacity:.6;height:1.3em;line-height:1.3em;position:relative;top:0}
+    .sitemap-entry-abbr{flex-shrink:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(9px,min(1vw,1.8vh),16px);font-style:italic;font-weight:bold;color:#5a4632;letter-spacing:.06em;background:linear-gradient(135deg,#e8dcc8 0%,#ddd0b8 100%);border:1px solid #c4a265;border-radius:3px;padding:.2em .6em;box-shadow:0 1px 2px rgba(0,0,0,.08);transition:opacity .4s ease,color .2s,border-color .2s,background .2s}
+    .sitemap-entry.sitemap-ready:hover .sitemap-entry-abbr{color:#3C2415;border-color:#D4A94C;background:linear-gradient(135deg,#f0e4cc 0%,#e8d8b8 100%)}
     .section-loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10;background:transparent}
     .section-loading-spinner{width:clamp(24px,3vw,40px);height:clamp(24px,3vw,40px);border:3px solid #E8DCC8;border-top:3px solid #C4A265;border-radius:50%;animation:modalSpin 1s linear infinite}
     .section-loading-bar{width:min(18vw,160px);height:3px;background:#E8DCC8;border-radius:2px;margin-top:1.5vh;overflow:hidden}
@@ -153,12 +156,12 @@
     .index-tab:active{background:linear-gradient(135deg,#5a4d38 0%,#7a6845 50%,#5a4d38 100%);color:#f0e2bc}
     .tab-abbr{position:absolute;right:.5vw;top:50%;transform:translateY(-50%);font-size:clamp(13px,1.1vw,18px);font-weight:bold;color:#e8d5a8;opacity:.6;letter-spacing:.02em}
     .index-tab:hover .tab-abbr,.index-tab.active .tab-abbr{opacity:.9}
-    .index-tab.index-tab-map{justify-content:flex-start;background:linear-gradient(135deg,#2a2e1e 0%,#3d4a2a 50%,#2a2e1e 100%);border-color:#6b7a4a}
-    .index-tab.index-tab-map:hover,.index-tab.index-tab-map.active{background:linear-gradient(135deg,#3a4228 0%,#556a35 50%,#3a4228 100%);border-color:#8aa055;color:#dde4c8}
-    .index-tab.index-tab-map:active{background:linear-gradient(135deg,#44502e 0%,#607840 50%,#44502e 100%);color:#e8efd5}
-    .tab-abbr-map{color:#b0c488!important;font-size:clamp(12px,1.05vw,17px)!important;letter-spacing:.03em;min-width:2.2em;text-align:center}
-    .index-tab.index-tab-map.settled{background:linear-gradient(135deg,#2a2e1e 0%,#3d4a2a 50%,#2a2e1e 100%);border-color:#6b7a4a}
-    .index-tab.index-tab-map.revealed{background:linear-gradient(135deg,#3a4228 0%,#556a35 50%,#3a4228 100%);border-color:#8aa055;color:#dde4c8}
+    .index-tab.index-tab-map{justify-content:flex-start;background:linear-gradient(135deg,#2e2820 0%,#44392c 50%,#2e2820 100%);border-color:#7a6b55}
+    .index-tab.index-tab-map:hover,.index-tab.index-tab-map.active{background:linear-gradient(135deg,#4a3c28 0%,#6b5a3e 50%,#4a3c28 100%);border-color:#c4a265;color:#e8d5a8}
+    .index-tab.index-tab-map:active{background:linear-gradient(135deg,#5a4d38 0%,#7a6845 50%,#5a4d38 100%);color:#f0e2bc}
+    .tab-abbr-map{color:#c4a265!important;font-size:clamp(12px,1.05vw,17px)!important;letter-spacing:.03em;min-width:2.2em;text-align:center;opacity:.7}
+    .index-tab.index-tab-map.settled{background:linear-gradient(135deg,#2e2820 0%,#44392c 50%,#2e2820 100%);border-color:#7a6b55}
+    .index-tab.index-tab-map.revealed{background:linear-gradient(135deg,#4a3c28 0%,#6b5a3e 50%,#4a3c28 100%);border-color:#c4a265;color:#e8d5a8}
     .login-container{width:28vw;min-width:320px;background:linear-gradient(135deg,#2a2318 0%,#3d3225 50%,#2a2318 100%);border:1px solid #6b5a3e;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6);overflow:hidden}
     .login-body{padding:2.5em 2em 2em}
     .login-field{margin-bottom:1.4em}
@@ -189,6 +192,7 @@
     </div>
     <div class="index-tabs">
       <div class="index-tab active" data-page="cover">Cover<span class="tab-abbr">C</span></div>
+      <div class="index-tab index-tab-map" data-page="sitemap">Index<span class="tab-abbr tab-abbr-map">IDX</span></div>
       <div class="index-tab" data-page="introduction">Introduction<span class="tab-abbr">I</span></div>
       <div class="index-tab" data-page="education">Education<span class="tab-abbr">E</span></div>
       <div class="index-tab" data-page="research-interests">Research Interests<span class="tab-abbr">RI</span></div>
@@ -200,7 +204,6 @@
       <div class="index-tab" data-page="certification">Certification<span class="tab-abbr">CT</span></div>
       <div class="index-tab" data-page="awards">Awards and Scholarships<span class="tab-abbr">AS</span></div>
       <div class="index-tab" data-page="ongoing-research">Ongoing Research<span class="tab-abbr">OR</span></div>
-      <div class="index-tab index-tab-map" data-page="sitemap">Site<span class="tab-abbr tab-abbr-map">MAP</span></div>
     </div>
   </div>
   <div class="modal-overlay" id="abstractModal">
@@ -338,13 +341,13 @@
         new Image().src='img/cv_innerpage.png';
         setTimeout(function(){emailOverlay.classList.add('visible')},800);
         statusText.textContent='Loading';statusText.classList.add('blink');statusCount.textContent='';statusDiv.classList.add('visible');
-        setTimeout(function(){var t=document.querySelector('.index-tab[data-page="introduction"]');if(t){t.classList.add('revealed');setTimeout(function(){t.classList.add('settled')},800)}},400);
         await dataFetchPromise;
         saveLocalCache();
         if(!hadLocalCache){
           ALL_SHEETS.forEach(function(s){revealTab(s)});
         }
         dataReady=true;revealTabsSequentially();
+        if(currentPage==='sitemap')revealIndexAbbrs();
         var unrevealed=0;document.querySelectorAll('.index-tab:not([data-page="cover"]):not([data-page="sitemap"])').forEach(function(t){if(!t.classList.contains('revealed'))unrevealed++});
         setTimeout(function(){statusText.textContent='Ready';statusText.classList.remove('blink');statusCount.textContent=''},Math.max(unrevealed*150+1000,1200));
         if(hadLocalCache){Promise.all(batches.map(function(batch){return fetch(GAS_URL+'?sheets='+encodeURIComponent(batch.join(','))).then(function(r){return r.json()}).then(function(j){for(var k in j)cache[k]=j[k]})})).then(saveLocalCache)}
@@ -355,7 +358,7 @@
       }
     }
     preload();
-    function showSectionLoading(){contentOverlay.innerHTML='<div class="section-loading-overlay"><div class="section-loading-spinner"></div><div class="section-loading-bar"><div class="section-loading-fill"></div></div><div class="section-loading-text">Loading...</div></div>';contentOverlay.style.display='block'}
+    function showSectionLoading(){contentOverlay.style.flexDirection='';contentOverlay.style.display='block';contentOverlay.innerHTML='<div class="section-loading-overlay"><div class="section-loading-spinner"></div><div class="section-loading-bar"><div class="section-loading-fill"></div></div><div class="section-loading-text">Loading...</div></div>'}
     function applyGenericPagination(fullHtml,sectionId){genericPagState.html=fullHtml;genericPagState.sectionId=sectionId;genericPagState.page=1;renderGenericPage(1)}
     function renderGenericPage(page){
       contentOverlay.innerHTML=genericPagState.html;contentOverlay.style.display='block';
@@ -423,7 +426,7 @@
       }catch(e){}
     }
     async function renderIntroduction(){
-      contentOverlay.style.display='block';
+      contentOverlay.style.flexDirection='';contentOverlay.style.display='block';
       var h='<div class="section-title">INTRODUCTION</div><div style="margin-top:10vh;"></div><div class="content-item intro-block" style="line-height:2.2; text-align: center; font-style: italic;">This website serves as <b>Jongsu Kim\'s Curriculum Vitae (CV)</b>, <br> covering everything from education to ongoing studies. <br><br> You can view each section</u> by clicking the labels on the right,<br> or download the full CV document by clicking the download button below.</div>';
       var cvUrl='';
       try{var d=await fetchFromGAS(['15_cv_link']);var rows=d['15_cv_link']||[];if(rows.length>0)cvUrl=rows[0].url||rows[0].URL||rows[0].link||''}catch(e){}
@@ -570,13 +573,37 @@
       }catch(e){}
     }
     function renderSitemap(){
-      contentOverlay.style.display='block';document.getElementById('pagination').style.display='none';
-      var tabs=[{a:'C',f:'Cover'},{a:'I',f:'Introduction'},{a:'E',f:'Education'},{a:'RI',f:'Research Interests'},{a:'P',f:'Publications'},{a:'P',f:'Presentations'},{a:'DP',f:'Discussion Participant'},{a:'TE',f:'Teaching Experience'},{a:'PE',f:'Professional Experiences'},{a:'CT',f:'Certification'},{a:'AS',f:'Awards and Scholarships'},{a:'OR',f:'Ongoing Research & Study'}];
-      var h='<div class="section-title" style="margin-bottom:9vh;">SITE <a href="#" class="mng-y-link">M</a>AP</div><div class="sitemap-container"><div class="sitemap-column">';
-      tabs.slice(0,6).forEach(function(t){h+='<div class="sitemap-row"><div class="sitemap-label">'+t.a+'</div><div class="sitemap-line"></div><div class="sitemap-name">'+t.f+'</div></div>'});
-      h+='</div><div class="sitemap-column">';
-      tabs.slice(6).forEach(function(t){h+='<div class="sitemap-row"><div class="sitemap-label">'+t.a+'</div><div class="sitemap-line"></div><div class="sitemap-name">'+t.f+'</div></div>'});
-      h+='</div></div>';contentOverlay.innerHTML=h;
+      contentOverlay.style.display='flex';contentOverlay.style.flexDirection='column';document.getElementById('pagination').style.display='none';
+      var tabs=[{a:'I',f:'Introduction',p:'introduction'},{a:'E',f:'Education',p:'education'},{a:'RI',f:'Research Interests',p:'research-interests'},{a:'P',f:'Publications',p:'publications'},{a:'P',f:'Presentations',p:'presentations'},{a:'DP',f:'Discussion Participant',p:'discussion'},{a:'TE',f:'Teaching Experience',p:'teaching'},{a:'PE',f:'Professional Experiences',p:'professional'},{a:'CT',f:'Certification',p:'certification'},{a:'AS',f:'Awards and Scholarships',p:'awards'},{a:'OR',f:'Ongoing Research & Study',p:'ongoing-research'}];
+      var dots='·';for(var i=0;i<80;i++)dots+=' ·';
+      var h='<div class="section-title" style="margin-bottom:2vh;"><a href="#" class="mng-y-link">I</a>NDEX</div><div class="sitemap-container">';
+      tabs.forEach(function(t){
+        var ready=dataReady;
+        h+='<div class="sitemap-entry'+(ready?' sitemap-ready':'')+'" data-nav="'+t.p+'">';
+        h+='<span class="sitemap-entry-name">'+t.f+'</span>';
+        h+='<span class="sitemap-entry-dots">'+dots+'</span>';
+        h+='<span class="sitemap-entry-abbr" style="'+(ready?'':'opacity:0;')+'"data-abbr="'+t.a+'">'+t.a+'</span>';
+        h+='</div>';
+      });
+      h+='</div>';contentOverlay.innerHTML=h;
+      if(dataReady){
+        contentOverlay.querySelectorAll('.sitemap-entry[data-nav]').forEach(function(el){el.addEventListener('click',function(){var p=el.getAttribute('data-nav');var tab=document.querySelector('.index-tab[data-page="'+p+'"]');if(tab)tab.click()})});
+      }else{
+        contentOverlay.querySelectorAll('.sitemap-entry').forEach(function(el){el.style.cursor='default'});
+      }
+    }
+    function revealIndexAbbrs(){
+      var entries=document.querySelectorAll('#contentOverlay .sitemap-entry');
+      if(!entries.length)return;
+      entries.forEach(function(el,i){
+        setTimeout(function(){
+          var abbr=el.querySelector('.sitemap-entry-abbr');
+          if(abbr)abbr.style.opacity='1';
+          el.classList.add('sitemap-ready');
+          el.style.cursor='pointer';
+          el.addEventListener('click',function(){var p=el.getAttribute('data-nav');var tab=document.querySelector('.index-tab[data-page="'+p+'"]');if(tab)tab.click()});
+        },(i+1)*120);
+      });
     }
     function renderPageContent(page){
       var map={introduction:renderIntroduction,'ongoing-research':renderOngoingResearch,education:renderEducation,'research-interests':renderResearchInterests,publications:function(){pubData=[];renderPublications()},presentations:renderPresentations,discussion:renderDiscussion,teaching:renderTeaching,professional:renderProfessional,certification:renderCertification,awards:renderAwards,sitemap:renderSitemap};
