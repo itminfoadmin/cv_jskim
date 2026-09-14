@@ -427,7 +427,7 @@
     }
     async function renderIntroduction(){
       contentOverlay.style.flexDirection='';contentOverlay.style.display='block';
-      var h='<div class="section-title">INTRODUCTION</div><div style="margin-top:10vh;"></div><div class="content-item intro-block" style="line-height:2.2; text-align: center; font-style: italic;">This website serves as <b>Jongsu Kim\'s Curriculum Vitae (CV)</b>, <br> covering everything from education to ongoing studies. <br><br> You can view each section</u> by clicking the labels on the right,<br> or download the full CV document by clicking the download button below.</div>';
+      var h='<div class="section-title">INTRODUCTION</div><div style="margin-top:10vh;"></div><div class="content-item intro-block" style="line-height:2.2; text-align: center; font-style: italic;">This website serves as <b>Jongsu Kim\'s Curriculum Vitae (CV)</b>, <br> covering everything from educational background to current research. <br><br> You can view each section</u> by clicking the labels on the right,<br> or download the full CV document by clicking the download button below.</div>';
       var cvUrl='';
       try{var d=await fetchFromGAS(['15_cv_link']);var rows=d['15_cv_link']||[];if(rows.length>0)cvUrl=rows[0].url||rows[0].URL||rows[0].link||''}catch(e){}
       h+='<div class="intro-block" style="margin-top:7vh;text-align:center;"><a href="#" class="cv-download-btn" id="cvDownloadBtn" data-url="'+escapeHtml(cvUrl)+'">See CV Docs</a></div>';

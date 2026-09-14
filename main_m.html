@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="format-detection" content="telephone=no,address=no,date=no">
+<meta http-equiv="x-rim-auto-match" content="none">
 <title>Jongsu Kim — Curriculum Vitae</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -302,7 +304,7 @@ document.getElementById('contentClose').addEventListener('click',function(){scre
 })();
 
 async function renderIntroduction(){
-  var h='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh;padding:0 4vw;"><div class="content-item" style="line-height:2.2;">This website serves as <b>Jongsu Kim\'s Curriculum Vitae (CV)</b>, covering everything from education to ongoing studies.<br><br>You can view each section from the menu, or view the full CV document below.</div>';
+  var h='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh;padding:0 4vw;"><div class="content-item" style="line-height:2.2;">This website serves as <br><b>Jongsu Kim\'s Curriculum Vitae (CV)</b>, <br>covering everything from educational background to current research.<br><br>You can view each section from the menu, or view the full CV document below.</div>';
   var cvUrl='';try{var d=await fetchFromGAS(['15_cv_link']);var rows=d['15_cv_link']||[];if(rows.length>0)cvUrl=rows[0].url||rows[0].URL||rows[0].link||''}catch(e){}
   h+='<div style="margin-top:6vh;text-align:center;"><a href="#" class="cv-download-btn" id="cvDlBtn" data-url="'+escapeHtml(cvUrl)+'">See CV Docs</a></div></div>';
   contentScroll.innerHTML=h;
@@ -326,7 +328,7 @@ async function renderEducation(){
     var school=escapeHtml(r.school_name||''),region=escapeHtml(r.region||''),period=escapeHtml(r.period||''),degree=r['degree/major']?escapeHtml(r['degree/major']):'',thesis=r.thesis?escapeHtml(r.thesis):'',advisor=r.advisor?escapeHtml(r.advisor):'',link=r.abstrat_link||'';
     h+='<div class="edu-entry">';
     if(degree){
-      h+='<div class="edu-school-line"><span class="edu-school-name">'+school+'</span>'+(region?', '+region:'')+'</div><div class="edu-detail"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;"><span>'+degree+'</span><span class="edu-period">'+period+'</span></div>';
+      h+='<div class="edu-school-line"><span><span class="edu-school-name">'+school+'</span>'+(region?', '+region:'')+'</span></div><div class="edu-detail"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;"><span>'+degree+'</span><span class="edu-period">'+period+'</span></div>';
       if(thesis)h+='<div>Thesis: '+thesis+'</div>';
       if(advisor&&link)h+='<div>Advisor: '+advisor+' <a href="#" class="abstract-link" data-url="'+escapeHtml(link)+'"><b><i>Abstract</i> <span class="ext-icon">&#8599;</span></b></a></div>';
       else if(advisor)h+='<div>Advisor: '+advisor+'</div>';
