@@ -174,8 +174,7 @@ body{font-family:Georgia,"Times New Roman",serif}
         <button class="modal-close modal-zoom-btn" id="modalZoomOut" title="축소">−</button>
         <span class="modal-zoom-level" id="modalZoomLevel">100%</span>
         <button class="modal-close modal-zoom-btn" id="modalZoomIn" title="확대">+</button>
-        <button class="modal-close" id="modalPrint">PDF</button>
-        <button class="modal-close" id="modalClose">CLOSE</button>
+        <button class="modal-close modal-zoom-btn" id="modalClose">CLOSE</button>
       </div>
     </div>
     <div class="modal-body">
@@ -309,7 +308,7 @@ async function renderIntroduction(){
   h+='<div style="margin-top:6vh;text-align:center;"><a href="#" class="cv-download-btn" id="cvDlBtn" data-url="'+escapeHtml(cvUrl)+'">See CV Docs</a></div></div>';
   contentScroll.innerHTML=h;
   var btn=document.getElementById('cvDlBtn');
-  if(btn)btn.addEventListener('click',function(e){e.preventDefault();var u=btn.getAttribute('data-url');if(u){document.getElementById('modalTitleEl').textContent='Curriculum Vitae';openModal(u)}});
+  if(btn)btn.addEventListener('click',function(e){e.preventDefault();var u=btn.getAttribute('data-url');if(u){document.getElementById('modalTitleEl').textContent='Curriculum Vitae';openModal(u,true)}});
 }
 
 async function renderOngoingResearch(){
@@ -361,13 +360,14 @@ var renderMap={introduction:renderIntroduction,education:renderEducation,'resear
 
 document.getElementById('modalClose').addEventListener('click',closeModal);
 document.getElementById('modalBackdrop').addEventListener('click',closeModal);
-document.getElementById('modalPrint').addEventListener('click',function(){if(_currentDocUrl)window.open(toDocPdf(_currentDocUrl),'_blank')});
+
 document.getElementById('modalZoomIn').addEventListener('click',function(){if(_zoomIdx<_zoomSteps.length-1){_zoomIdx++;applyZoom()}});
 document.getElementById('modalZoomOut').addEventListener('click',function(){if(_zoomIdx>0){_zoomIdx--;applyZoom()}});
 
 function docBase(url){try{var m=url.match(/(https:\/\/docs\.google\.com\/document\/d\/[^/]+)/);if(m)return m[1]}catch(e){}return null}
 function toDocPreview(url){var b=docBase(url);return b?b+'/preview':url.replace(/\/(edit|preview).*$/,'/preview')}
 function toDocPdf(url){var b=docBase(url);return b?b+'/export?format=pdf&attachment=false':url.replace(/\/preview.*$/,'/export?format=pdf')}
+function toDocPdfEmbed(url){var pdf=toDocPdf(url);return'https://docs.google.com/gview?embedded=true&url='+encodeURIComponent(pdf)}
 
 function applyZoom(){
   var s=_zoomBaseScale*_zoomSteps[_zoomIdx],body=document.querySelector('.modal-body'),mh=body.clientHeight||(window.innerHeight-50);
@@ -376,7 +376,7 @@ function applyZoom(){
   var scr=document.getElementById('modalBodyScroll');if(scr){scr.scrollTop=0;scr.scrollLeft=0}
 }
 
-function openModal(url){
+function openModal(url,asPdf){
   if(!url)return;
   _currentDocUrl=url;_zoomIdx=5;
   var l=document.getElementById('modalLoading');l.classList.remove('hidden');
@@ -386,7 +386,7 @@ function openModal(url){
   modalIframe.style.width='1040px';modalIframe.style.height=Math.ceil(mh/_zoomBaseScale)+'px';modalIframe.style.transform='scale('+_zoomBaseScale+')';
   document.getElementById('modalZoomLevel').textContent='100%';
   modalIframe.onload=function(){l.classList.add('hidden');modalIframe.classList.add('loaded')};
-  modalIframe.src=toDocPreview(url);
+  modalIframe.src=asPdf?toDocPdfEmbed(url):toDocPreview(url);
 }
 
 function closeModal(){
