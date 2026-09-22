@@ -11,11 +11,11 @@ body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:ce
 .loading-label{margin-top:1em;font-family:Georgia,serif;font-size:14px;color:#b0a08a;font-style:italic;letter-spacing:.08em;}
 .page-wrapper{position:relative;width:90vw;height:90vh;max-width:1200px;background:url('img/cv_mng_bgi.png') center top/cover no-repeat;border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,.15);overflow:visible;}
 .top-bar{position:absolute;top:1.2%;left:2%;right:2%;display:flex;justify-content:space-between;align-items:center;z-index:5;}
-.btn-cv{font-family:Georgia,serif;font-size:clamp(11px,.78vw,14px);color:#e8d5a8;background:linear-gradient(135deg,#4a3c28,#6b5a3e);border:1px solid #c4a265;border-radius:3px;padding:.2em 1.1em;cursor:pointer;font-style:italic;letter-spacing:.05em;transition:background .2s;}
+.btn-cv{font-family:Georgia,serif;font-size:clamp(11px,.78vw,14px);color:#e8d5a8;background:linear-gradient(135deg,#4a3c28,#6b5a3e);border:1px solid #c4a265;border-radius:3px;padding:.2em 1.1em;cursor:pointer;font-style:italic;letter-spacing:.05em;transition:background .2s;display:flex;align-items:center;}
 .btn-cv:hover{background:linear-gradient(135deg,#5a4d38,#7a6845);}
-.logout-btn{font-family:Georgia,serif;font-size:clamp(11px,.78vw,14px);color:#fff;background:rgba(140,60,60,.75);border:1px solid rgba(180,90,90,.6);border-radius:3px;padding:.2em 1.1em;cursor:pointer;font-style:italic;}
+.logout-btn{font-family:Georgia,serif;font-size:clamp(11px,.78vw,14px);color:#fff;background:rgba(140,60,60,.75);border:1px solid rgba(180,90,90,.6);border-radius:3px;padding:.2em 1.1em;cursor:pointer;font-style:italic;display:flex;align-items:center;}
 .logout-btn:hover{background:rgba(160,50,50,.9);}
-.content-header{position:absolute;top:7%;left:2%;right:2%;z-index:5;background:#fff;padding:1% 2% 0;}
+.content-header{position:absolute;top:8%;left:2%;right:2%;z-index:5;background:#fff;padding:1% 2% 0;}
 .content-cards{position:absolute;top:18%;left:2%;right:2%;bottom:2%;overflow-y:auto;overflow-x:hidden;padding:.5vh 2% 5vh;scrollbar-width:none;-ms-overflow-style:none;background:#fff;}
 .content-cards::-webkit-scrollbar{display:none;}
 .mng-tabs{position:absolute;top:8%;left:100%;bottom:2%;width:clamp(115px,12.5vw,170px);display:flex;flex-direction:column;gap:3px;overflow-y:auto;scrollbar-width:none;z-index:1;}
@@ -133,7 +133,7 @@ body{width:100vw;height:100vh;display:flex;justify-content:center;align-items:ce
 <div class="inline-loading-overlay" id="inlineLoading"><div class="inline-loading-spinner"></div><div class="inline-loading-bar-wrap"><div class="inline-loading-bar-fill" id="inlineLoadingBar"></div></div><div class="inline-loading-label" id="inlineLoadingLabel">Loading...</div></div>
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-bar-wrap"><div class="loading-bar-fill" id="loadingBar"></div></div><div class="loading-label" id="loadingLabel">Preparing...</div></div>
 <div class="page-wrapper">
-  <div class="top-bar"><div></div><div style="display:flex;gap:.6em;align-items:center;"><button class="btn-cv" onclick="window.open('main_c.html','_blank')">CV 확인하기</button><button class="logout-btn" id="logoutBtn">Logout</button></div></div>
+  <div class="top-bar"><div></div><div style="display:flex;gap:.6em;align-items:stretch;"><button class="btn-cv" onclick="window.open('main_c.html','_blank')">CV 확인하기</button><button class="btn-cv" onclick="window.open('https://docs.google.com/spreadsheets/d/1OmDnDwGptPLZ3AOVTNLFjCJT5omBXbvLJ9SXb_PZlF0/edit?usp=sharing','_blank')">See Sheet</button><button class="logout-btn" id="logoutBtn">Logout</button></div></div>
   <div class="content-header" id="contentHeader"></div>
   <div class="content-cards" id="contentArea"></div>
   <div class="mng-tabs" id="mngTabs"></div>
@@ -170,7 +170,28 @@ function hideInlineLoading(){const el=document.getElementById('inlineLoading');i
 
 async function preloadAll(){const bar=document.getElementById('loadingBar'),label=document.getElementById('loadingLabel');const total=ALL_SHEETS.length;let loaded=0;await Promise.all(ALL_SHEETS.map(async s=>{try{const r=await fetch(GAS_URL+'?sheets='+encodeURIComponent(s));const j=await r.json();cache[s]=j[s]||[];}catch(e){cache[s]=[];}loaded++;bar.style.width=Math.round(loaded/total*100)+'%';label.textContent='Loading '+loaded+'/'+total;}));mgrData=cache['14_manager_infor']||[];label.textContent='Complete';bar.style.width='100%';setTimeout(()=>{document.getElementById('loadingOverlay').classList.add('hidden');},350);}
 async function fetchSheet(s){if(cache[s])return cache[s];const r=await fetch(GAS_URL+'?sheets='+encodeURIComponent(s));const j=await r.json();cache[s]=j[s]||[];return cache[s];}
-async function writeSheet(s,a,p){const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({sheet:s,action:a,data:p})});const j=await r.json();delete cache[s];return j;}
+async function writeSheet(s,a,p){
+  var maxRetries=3,lastErr;
+  for(var i=0;i<maxRetries;i++){
+    try{
+      var controller=new AbortController();
+      var tid=setTimeout(function(){controller.abort();},30000);
+      var r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({sheet:s,action:a,data:p}),redirect:'follow',signal:controller.signal});
+      clearTimeout(tid);
+      var txt=await r.text();
+      var j;
+      try{j=JSON.parse(txt);}catch(pe){throw new Error('Server returned invalid response. Please retry.');}
+      if(j.error)throw new Error(j.error);
+      delete cache[s];
+      return j;
+    }catch(e){
+      lastErr=e;
+      if(e.name==='AbortError')lastErr=new Error('Request timed out. Please retry.');
+      if(i<maxRetries-1)await new Promise(function(res){setTimeout(res,1500*(i+1));});
+    }
+  }
+  throw lastErr;
+}
 async function sha256(m){const b=new TextEncoder().encode(m);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 
@@ -334,7 +355,7 @@ async function loadTab(tab,showOverlay){
       // Use /edit for iframe so authenticated users can edit directly
       var iframeSrc=curUrl?esc(curUrl.replace(/\/(edit|preview).*$/,'/edit')):'';
       html+='<div id="cvLinkPreviewWrap" style="margin-top:.4vh;border:1px solid #d4c9b0;border-radius:4px;overflow:hidden;background:#fff;'+(curUrl?'':'display:none;')+'">';
-      html+='<iframe id="cvLinkIframe" src="'+iframeSrc+'" style="width:100%;height:55vh;border:none;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>';
+      html+='<iframe id="cvLinkIframe" src="'+iframeSrc+'" style="width:100%;height:72vh;border:none;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>';
       html+='</div>';
 
       contentArea.innerHTML=html;

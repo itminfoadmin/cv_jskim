@@ -354,7 +354,23 @@
       }catch(e){
         statusDiv.classList.add('visible');
         statusDiv.innerHTML='<div class="cover-status-text">Loading failed</div><button class="retry-btn" id="retryBtn">RETRY</button>';
-        document.getElementById('retryBtn').addEventListener('click',function(){statusDiv.innerHTML='<div class="cover-status-text" id="coverStatusText">Preparing</div><div class="cover-status-text" id="coverStatusCount" style="font-size:clamp(9px,0.65vw,11px);margin-top:0.3em;opacity:0.7;"></div>';preload()});
+        document.getElementById('retryBtn').addEventListener('click',function(){
+          cache={};dataReady=false;pubData=[];revealedCount=0;hadLocalCache=false;
+          genericPagState={html:'',page:1,sectionId:''};eduPagState={html:'',page:1,perPage:3};
+          try{localStorage.removeItem('cv_data')}catch(e){}
+          document.querySelectorAll('.index-tab:not([data-page="cover"]):not([data-page="sitemap"])').forEach(function(t){t.classList.remove('revealed','settled')});
+          var mapTab=document.querySelector('.index-tab[data-page="sitemap"]');if(mapTab){mapTab.classList.remove('revealed','settled')}
+          contentOverlay.style.display='none';contentOverlay.innerHTML='';document.getElementById('pagination').style.display='none';
+          img.classList.remove('visible');img.src='img/cv_cover.png?v='+Date.now();
+          document.querySelector('.name-overlay').classList.remove('visible','no-animate');
+          emailOverlay.classList.remove('visible','no-animate');
+          var coverTab=document.querySelector('.index-tab[data-page="cover"]');if(coverTab)coverTab.classList.remove('cover-ready');
+          dataFetchPromise=Promise.all(batches.map(function(batch){
+            return fetch(GAS_URL+'?sheets='+encodeURIComponent(batch.join(','))).then(function(r){return r.json()}).then(function(j){for(var k in j)cache[k]=j[k]});
+          }));
+          statusDiv.innerHTML='<div class="cover-status-text" id="coverStatusText">Preparing</div><div class="cover-status-text" id="coverStatusCount" style="font-size:clamp(9px,0.65vw,11px);margin-top:0.3em;opacity:0.7;"></div>';
+          preload();
+        });
       }
     }
     preload();
